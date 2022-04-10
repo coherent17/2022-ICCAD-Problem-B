@@ -1,12 +1,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 #include "readfile.h"
 
-Die *createDie(){
-    Die *newDie = (Die *)malloc(sizeof(Die));
-    newDie->tech = (char *)malloc(sizeof(char)*3);
-    return newDie;
+void createDie(Die * die){
+    die = (Die *)malloc(sizeof(Die));
+    assert(die);
+    die->tech = (char *)malloc(sizeof(char)*5);
+    assert(die->tech);
 }
 
 Tech_menu *create_tech_menu(){
@@ -51,11 +53,17 @@ void read_one_blank_line(FILE *input){
 }
 
 void readfile(FILE *input,Die *top_die,Die *bottom_die,hybrid_terminal *term,int *NumTechnologies, Tech_menu **tech_menu, int *NumInstances, InstanceNode *Instancearray, int *NumNets, Net *Netarray){
-    
+    assert(input);
+
+    //allocate memory for top die and bottom die
+    createDie(top_die);
+    createDie(bottom_die);
+
     //read DieSize
     fscanf(input,"%*s %*d %*d %d %d",&(top_die->size_x),&(top_die->size_y));
     bottom_die->size_x = top_die->size_x;
-    bottom_die->size_x = top_die->size_x;
+    bottom_die->size_y = top_die->size_y;
+    printf("%d %d %d %d", top_die->size_x, top_die->size_y, bottom_die->size_x, bottom_die->size_y);
     read_one_blank_line(input);
 
     //read Utilization
@@ -141,7 +149,3 @@ void readfile(FILE *input,Die *top_die,Die *bottom_die,hybrid_terminal *term,int
     }
     fclose(input);
 }
-
-
-
-
