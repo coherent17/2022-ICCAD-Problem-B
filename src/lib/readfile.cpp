@@ -60,10 +60,9 @@ void readfile(FILE *input,Die *top_die,Die *bottom_die,hybrid_terminal *term,int
     createDie(bottom_die);
 
     //read DieSize
-    fscanf(input,"%*s %*d %*d %d %d",&(top_die->size_x),&(top_die->size_y));
+    fscanf(input,"%*s %*d %*d %d %d",&top_die->size_x, &top_die->size_y);
     bottom_die->size_x = top_die->size_x;
     bottom_die->size_y = top_die->size_y;
-    printf("%d %d %d %d", top_die->size_x, top_die->size_y, bottom_die->size_x, bottom_die->size_y);
     read_one_blank_line(input);
 
     //read Utilization
