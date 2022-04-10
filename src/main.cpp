@@ -3,11 +3,8 @@
 #include "../src/lib/readfile.h"
 
 int main(){
-	printf("start\n");
-	FILE *input = fopen("../Benchmark/case2.txt", "r");
-	char buffer[50];
-	fscanf(input, "%s", buffer);
-	printf("%s\n", buffer);
+	FILE *input = fopen("Benchmark/case1.txt", "r");
+	assert(input);
 
 	Die *top_die = NULL;
 	Die *bottom_die = NULL;
