@@ -1,45 +1,63 @@
 #ifndef _READFILE_H_
 #define _READFILE_H_
 
-typedef struct _cor{
-    int x;
-    int y;
-}coordinate;
+#define TECH_NAME_SIZE 10
+#define PIN_NAME_SIZE 10
+#define LIBCELL_NAME_SIZE 10
 
 typedef struct _die{
+    int lowerLeftX;
+    int lowerLeftY;
+    int upperRightX;
+    int upperRightY;
     int size_x;
     int size_y;
-    int row_height;
-    int row_number;
     int MaxUtil;
-    char *tech;
+    int startX;
+    int startY;
+    int rowLength;
+    int rowHeight;
+    int repeatCount;
+    char tech[TECH_NAME_SIZE];
 }Die;
 
 typedef struct _terminal{
-    int size_x;
-    int size_y;
+    int sizeX;
+    int sizeY;
     int spacing;
-}hybrid_terminal;
+}Hybrid_terminal;
 
 typedef struct _pin{
-    char *pin_name; //P1, P2, ...
-    int x;
-    int y;
+    char pinName[PIN_NAME_SIZE]; //P1, P2, ...
+    int pinLocationX;
+    int pinLocationY;
 }Pin;
 
 typedef struct _Libcell{
-    char *libcell_name; //MC1,MC2...
-    int size_x;
-    int size_y;
-    int pin_count;
+    char libCellName[LIBCELL_NAME_SIZE]; //MC1,MC2...
+    int libCellSizeX;
+    int libCellSizeY;
+    int pinCount;
     Pin *pinarray;
 }Libcell;
 
 typedef struct _tech_menu{
-    char *tech; //TA,TB
+    char tech[TECH_NAME_SIZE]; //TA,TB
     int libcell_count;
-    Libcell *libcell; 
+    Libcell *libcell;
 }Tech_menu;
+
+
+void readDieInfo(FILE *input, Die *top_die, Die *bottom_die);
+void printDieInfo(Die *top_die, Die *bottom_die);
+void readHybridTerminalInfo(FILE *input, Hybrid_terminal *terminal);
+void printHybridTerminalInfo(Hybrid_terminal *terminal);
+void readTechnology(FILE *input, int *NumTechnologies, Tech_menu **tech_menu);
+
+///////////////////////////////////////////
+
+/*
+
 
 typedef struct _InstanceNode{
     char *instance_name;  //C1, C2, ...
@@ -59,14 +77,6 @@ typedef struct _Net{
 }Net;
 
 
-void createDie(Die *die);
-Tech_menu *create_tech_menu();
-void create_libcell(Libcell *libcell, int libcell_count);
-void create_pinarray(Pin *pinarray, int pin_count);
-void create_InstanceArray(int NumInstances, InstanceNode *Instancearray);
-void create_netarray(int NumNets, Net *Netarray);
-void create_nodearray(int number_connection, Net *Netarray, int index);
-void read_one_blank_line(FILE *input);
-void readfile(FILE *input,Die *top_die,Die *bottom_die,hybrid_terminal *term,int *NumTechnologies, Tech_menu **tech_menu, int *NumInstances, InstanceNode *Instancearray, int *NumNets, Net *Netarray);
+*/
 
 #endif

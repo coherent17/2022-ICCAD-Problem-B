@@ -4,32 +4,7 @@
 #include <assert.h>
 #include "readfile.h"
 
-void createDie(Die * die){
-    die = (Die *)malloc(sizeof(Die));
-    assert(die);
-    die->tech = (char *)malloc(sizeof(char)*5);
-    assert(die->tech);
-}
-
-Tech_menu *create_tech_menu(){
-    Tech_menu *new_tech_menu = (Tech_menu *)malloc(sizeof(Tech_menu));
-    new_tech_menu->tech = (char *)malloc(sizeof(char)*3);
-    return new_tech_menu;
-}
-
-void create_libcell(Libcell *libcell, int libcell_count){
-    libcell = (Libcell *)malloc(sizeof(Libcell)*libcell_count);
-    for(int i=0 ; i < libcell_count ; i++){
-        libcell[i].libcell_name = (char *)malloc(sizeof(char)*5);
-    }
-}
-
-void create_pinarray(Pin *pinarray, int pin_count){
-    pinarray = (Pin *)malloc(sizeof(Pin) * pin_count);
-    for(int i = 0; i < pin_count; i++){
-        pinarray[i].pin_name = (char *)malloc(sizeof(char)*5);
-    }
-}
+/*
 
 void create_InstanceArray(int NumInstances, InstanceNode *Instancearray){
     Instancearray = (InstanceNode *)malloc(sizeof(InstanceNode) * NumInstances);
@@ -47,73 +22,122 @@ void create_netarray(int NumNets, Net *Netarray){
 void create_nodearray(int number_connection, Net *Netarray, int index){
     Netarray[index].NodeArray = (Node *)malloc(sizeof(Node) * number_connection);
 }
+*/
 
 void read_one_blank_line(FILE *input){
-    fscanf(input,"%*s");
+    fgetc(input);
 }
 
-void readfile(FILE *input,Die *top_die,Die *bottom_die,hybrid_terminal *term,int *NumTechnologies, Tech_menu **tech_menu, int *NumInstances, InstanceNode *Instancearray, int *NumNets, Net *Netarray){
+
+void readDieInfo(FILE *input, Die *top_die, Die *bottom_die){
+    //if the pass in file pointer is point to NULL -> abort and raise the exception
     assert(input);
 
-    //allocate memory for top die and bottom die
-    createDie(top_die);
-    createDie(bottom_die);
-
-    //read DieSize
-    fscanf(input,"%*s %*d %*d %d %d",&top_die->size_x, &top_die->size_y);
-    bottom_die->size_x = top_die->size_x;
-    bottom_die->size_y = top_die->size_y;
+    //read DieSize of the top die and the bottom size
+    //***********************************************************************
+    fscanf(input,"%*s %d %d %d %d", &(top_die->lowerLeftX), &(top_die->lowerLeftY), &(top_die->upperRightX), &(top_die->upperRightY));
+    bottom_die->lowerLeftX = top_die->lowerLeftX;
+    bottom_die->lowerLeftY = top_die->lowerLeftY;
+    bottom_die->upperRightX = top_die->upperRightX;
+    bottom_die->upperRightY = top_die->upperRightY;
     read_one_blank_line(input);
+    //***********************************************************************
 
-    //read Utilization
+
+
+    //read maximum Utilization of the top die and the bottom die
+    //***********************************************************************
     fscanf(input,"%*s %d", &(top_die->MaxUtil));
     fscanf(input,"%*s %d", &(bottom_die->MaxUtil));
     read_one_blank_line(input);
+    //***********************************************************************
 
-    //read DieRows
-    fscanf(input,"%*s %*d %*d %d %d %d",&(top_die->size_x),&(top_die->row_height),&(top_die->row_number));
-    fscanf(input,"%*s %*d %*d %d %d %d",&(bottom_die->size_x),&(bottom_die->row_height),&(bottom_die->row_number));
+
+
+    //read DieRows Information
+    //************************************************************************************************************
+    fscanf(input,"%*s %d %d %d %d %d",&(top_die->startX), &(top_die->startY), &(top_die->rowLength),&(top_die->rowHeight), &(top_die->repeatCount));
+    fscanf(input,"%*s %d %d %d %d %d",&(bottom_die->startX), &(bottom_die->startY), &(bottom_die->rowLength),&(bottom_die->rowHeight), &(bottom_die->repeatCount));
     read_one_blank_line(input);
+    //************************************************************************************************************
+
+
 
     //read DieTech
+    //***********************************************************************
     fscanf(input,"%*s %s",top_die->tech);
     fscanf(input,"%*s %s",bottom_die->tech);
     read_one_blank_line(input);
+    //***********************************************************************
+}
+
+//print the detail die information
+void printDieInfo(Die *top_die, Die *bottom_die){
+    printf("\nTop Die Information:\n");
+    printf("DieSize <lowerLeftX> <lowerLeftY> <upperRightX> <upperRightY>: %d %d %d %d\n", (top_die->lowerLeftX), (top_die->lowerLeftY), (top_die->upperRightX), (top_die->upperRightY));
+    printf("TopDieMaxUtil: %d\n", top_die->MaxUtil);
+    printf("TopDieRows <startX> <startY> <rowLength> <rowHeight> <repeatCount>:");
+    printf("%d %d %d %d %d\n", (top_die->startX), (top_die->startY), (top_die->rowLength), (top_die->rowHeight), (top_die->repeatCount));
+    printf("TopDieTech <TechName>: %s\n\n", top_die->tech);
+
+
+    printf("\nBottom Die Information:\n");
+    printf("DieSize <lowerLeftX> <lowerLeftY> <upperRightX> <upperRightY>: %d %d %d %d\n", (bottom_die->lowerLeftX), (bottom_die->lowerLeftY), (bottom_die->upperRightX), (bottom_die->upperRightY));
+    printf("BottomDieMaxUtil: %d\n", bottom_die->MaxUtil);
+    printf("BottomDieRows <startX> <startY> <rowLength> <rowHeight> <repeatCount>:");
+    printf("%d %d %d %d %d\n", (bottom_die->startX), (bottom_die->startY), (bottom_die->rowLength),(bottom_die->rowHeight), (bottom_die->repeatCount));
+    printf("BottomDieTech <TechName>: %s\n\n", bottom_die->tech);
+}
+
+void readHybridTerminalInfo(FILE *input, Hybrid_terminal *terminal){
+    //if the pass in file pointer is point to NULL -> abort and raise the exception
+    assert(input);
 
     //read terminal size & spacing
-    fscanf(input, "%*s %d %d",&(term->size_x),&(term->size_y));
-    fscanf(input, "%*s %d",&(term->spacing));
+    fscanf(input, "%*s %d %d",&(terminal->sizeX),&(terminal->sizeY));
+    fscanf(input, "%*s %d",&(terminal->spacing));
     read_one_blank_line(input);
+}
+
+void printHybridTerminalInfo(Hybrid_terminal *terminal){
+    printf("\nHybrid Terminal Information:\n");
+    printf("TerminalSize <sizeX> <sizeY>: %d %d\n", terminal->sizeX, terminal->sizeY);
+    printf("TerminalSpacing <spacing>: %d\n\n", terminal->spacing);
+}
+
+void readTechnology(FILE *input, int *NumTechnologies, Tech_menu **tech_menu){
+    //if the pass in file pointer is point to NULL -> abort and raise the exception
+    assert(input);
 
     //read number of technologies
     fscanf(input, "%*s %d",&(*NumTechnologies));
-
-    //read different tech
-
-    //allocate memory for the tech menu
-    tech_menu = (Tech_menu **)malloc(sizeof(Tech_menu *) * (*NumTechnologies));
-    for(int i=0 ; i < *NumTechnologies ; i++){
-        tech_menu[i]= create_tech_menu();
-    }
+    //allocate memory for the tech menu, might be 2 tech or 1 tech ex: TA TB (2) / TA TA (1) / TB TB (1)
+    *tech_menu = (Tech_menu *)malloc(sizeof(Tech_menu) * (*NumTechnologies));
 
     for(int i = 0; i < *NumTechnologies; i++){
-        fscanf(input, "%*s %s %d", tech_menu[i]->tech, &(tech_menu[i]->libcell_count));
-        create_libcell(tech_menu[i]->libcell, tech_menu[i]->libcell_count);
+        fscanf(input, "%*s %s %d", (tech_menu[i])->tech, &(tech_menu[i]->libcell_count));
+        printf("%d\n", (tech_menu[i])->libcell_count);
+        (tech_menu[i])->libcell = (Libcell *)malloc(sizeof(Libcell) * (tech_menu[i])->libcell_count);
 
         //read libcell libcell count time
         for(int j = 0; j < tech_menu[i]->libcell_count; j++){
-            Libcell *curlibcell = &(tech_menu[i]->libcell[j]);
-            fscanf(input, "%*s %s %d %d %d", curlibcell->libcell_name, &curlibcell->size_x, &curlibcell->size_y, &curlibcell->pin_count);
-            create_pinarray(curlibcell->pinarray, curlibcell->pin_count);
+            fscanf(input, "%*s %s %d %d %d", tech_menu[i]->libcell[j].libCellName, &(tech_menu[i]->libcell[j].libCellSizeX), &(tech_menu[i]->libcell[j].libCellSizeY), &(tech_menu[i]->libcell[j].pinCount));
+            tech_menu[i]->libcell[j].pinarray = (Pin *)malloc(sizeof(Pin) * tech_menu[i]->libcell[j].pinCount);
 
             //read pinarray pinarray_count time
-            for(int k = 0; k < curlibcell->pin_count; k++){
-                Pin *curPin = &(curlibcell->pinarray[k]);
-                fscanf(input, "%*s %s %d %d", curPin->pin_name, &curPin->x, &curPin->y);
+            for(int k = 0; k < tech_menu[i]->libcell[j].pinCount; k++){
+                fscanf(input, "%*s %s %d %d", tech_menu[i]->libcell[j].pinarray[k].pinName, &(tech_menu[i]->libcell[j].pinarray[k].pinLocationX), &(tech_menu[i]->libcell[j].pinarray[k].pinLocationY));
             }
         }
     }
     read_one_blank_line(input);
+}
+
+/*
+
+void readfile(FILE *input,int *NumTechnologies, Tech_menu *tech_menu, int *NumInstances, InstanceNode *Instancearray, int *NumNets, Net *Netarray){
+    assert(input);
+
 
     //read standard cell belong to which manufacture
     fscanf(input, "%*s %d", &(*NumInstances));
@@ -148,3 +172,5 @@ void readfile(FILE *input,Die *top_die,Die *bottom_die,hybrid_terminal *term,int
     }
     fclose(input);
 }
+
+*/
