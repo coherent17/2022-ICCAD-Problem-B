@@ -9,21 +9,23 @@ int main(){
 	Die top_die, bottom_die;
 	Hybrid_terminal terminal;
 	int NumTechnologies;
-	Tech_menu *tech_menu = NULL;;
-
-	/*
+	Tech_menu *tech_menu = NULL;
 	int NumInstances;
-	InstanceNode *Instancearray = NULL;
+	Instance *InstanceArray = NULL;
 	int NumNets;
-	Net *Netarray = NULL;
-	*/
+	Net *NetArray = NULL;
 
 	readDieInfo(input, &top_die, &bottom_die);
-	printDieInfo(&top_die, &bottom_die);
+	printDieInfo(top_die, bottom_die);
 	readHybridTerminalInfo(input, &terminal);
-	printHybridTerminalInfo(&terminal);
-	readTechnology(input, &NumTechnologies, &tech_menu);
-	printf("test!%d\n", tech_menu[1].libcell_count);
+	printHybridTerminalInfo(terminal);
+	readTechnologyInfo(input, &NumTechnologies, &tech_menu);
+	printTechnologyInfo(NumTechnologies, tech_menu);
+	readInstanceInfo(input, &NumInstances, &InstanceArray);
+	printInstanceInfo(NumInstances, InstanceArray);
+	readNetInfo(input, &NumNets, &NetArray);
+	printNetInfo(NumNets, NetArray);
 	
+	fclose(input);
 	return 0;
 }
