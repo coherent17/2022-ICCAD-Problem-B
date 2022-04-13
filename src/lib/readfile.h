@@ -69,13 +69,24 @@ typedef struct _Net{
 
 void readDieInfo(FILE *input, Die *top_die, Die *bottom_die);
 void printDieInfo(Die top_die, Die bottom_die);
+
+
 void readHybridTerminalInfo(FILE *input, Hybrid_terminal *terminal);
 void printHybridTerminalInfo(Hybrid_terminal terminal);
-void readTechnologyInfo(FILE *input, int *NumTechnologies, Tech_menu **tech_menu);
-void printTechnologyInfo(int NumTechnologies, Tech_menu *tech_menu);
+
+
+void readTechnologyInfo(FILE *input, int *NumTechnologies, Tech_menu **TechMenu);
+void freeTech_menu(int NumTechnologies, Tech_menu **TechMenu);
+void printTechnologyInfo(int NumTechnologies, Tech_menu *TechMenu);
+
+
+void freeInstanceArray(int NumInstances, Instance **InstanceArray);
 void readInstanceInfo(FILE *input, int *NumInstances, Instance **InstanceArray);
 void printInstanceInfo(int NumInstances, Instance *InstanceArray);
+
+
 void readNetInfo(FILE *input, int *NumNets, Net **NetArray);
+void freeNetArray(int NumNets, Net **NetArray);
 void printNetInfo(int NumNets, Net *NetArray);
 
 #endif

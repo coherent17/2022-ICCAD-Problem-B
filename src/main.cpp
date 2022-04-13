@@ -9,7 +9,7 @@ int main(){
 	Die top_die, bottom_die;
 	Hybrid_terminal terminal;
 	int NumTechnologies;
-	Tech_menu *tech_menu = NULL;
+	Tech_menu *TechMenu = NULL;
 	int NumInstances;
 	Instance *InstanceArray = NULL;
 	int NumNets;
@@ -19,13 +19,17 @@ int main(){
 	printDieInfo(top_die, bottom_die);
 	readHybridTerminalInfo(input, &terminal);
 	printHybridTerminalInfo(terminal);
-	readTechnologyInfo(input, &NumTechnologies, &tech_menu);
-	printTechnologyInfo(NumTechnologies, tech_menu);
+	readTechnologyInfo(input, &NumTechnologies, &TechMenu);
+	printTechnologyInfo(NumTechnologies, TechMenu);
 	readInstanceInfo(input, &NumInstances, &InstanceArray);
 	printInstanceInfo(NumInstances, InstanceArray);
 	readNetInfo(input, &NumNets, &NetArray);
 	printNetInfo(NumNets, NetArray);
 	
+
+	freeTech_menu(NumTechnologies, &TechMenu);
+	freeInstanceArray(NumInstances, &InstanceArray);
+	freeNetArray(NumNets, &NetArray);
 	fclose(input);
 	return 0;
 }
