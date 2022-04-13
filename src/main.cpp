@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include "../src/lib/readfile.h"
+#include "../src/lib/partition.h"
 
 int main(){
 	FILE *input = fopen("Benchmark/case1.txt", "r");
@@ -26,6 +27,8 @@ int main(){
 	readNetInfo(input, &NumNets, &NetArray);
 	printNetInfo(NumNets, NetArray);
 	
+	OutputPartitionFormat(NumNets, NumInstances, NetArray);
+	PartitionInstance();
 
 	freeTech_menu(NumTechnologies, &TechMenu);
 	freeInstanceArray(NumInstances, &InstanceArray);
