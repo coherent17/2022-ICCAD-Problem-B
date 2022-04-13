@@ -19,3 +19,6 @@ $(BINS): src/main.cpp $(OBJS)
 
 do:
 	$(CHECKCC) $(CHECKFLAGS) ./main
+
+clean:
+	rm -rf src/lib/*.o main
