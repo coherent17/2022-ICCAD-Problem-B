@@ -11,6 +11,51 @@ void read_one_blank_line(FILE *input){
     fgetc(input);
 }
 
+void readTechnologyInfo(FILE *input, int *NumTechnologies, vector <Tech_menu> &TechMenu){
+    assert(input);
+
+    //read number of technologies
+    fscanf(input, "%*s %d",&(*NumTechnologies));
+
+    for(int i = 0; i < *NumTechnologies; i++){
+        Tech_menu temp;
+        fscanf(input, "%*s %s %d", temp.tech, &(temp.libcell_count));
+
+        vector <Libcell> temp_libcell(temp.libcell_count);
+
+        //read libcell libcell count time
+        for(int j = 0; j < temp.libcell_count; j++){
+            fscanf(input, "%*s %s %d %d %d", temp_libcell[j].libCellName, &(temp_libcell[j].libCellSizeX), &(temp_libcell[j].libCellSizeY), &(temp_libcell[j].pinCount));
+            vector <Pin> temp_pinarray(temp_libcell[j].pinCount);
+
+            //read pinarray pinarray_count time
+            for(int k = 0; k < temp_libcell[j].pinCount; k++){
+                fscanf(input, "%*s %s %d %d", temp_pinarray[k].pinName, &(temp_pinarray[k].pinLocationX), &(temp_pinarray[k].pinLocationY));
+            }
+            temp_libcell[j].pinarray = temp_pinarray;
+        }
+        temp.libcell = temp_libcell;
+        TechMenu.emplace_back(temp);
+    }
+    read_one_blank_line(input);
+}
+
+void printTechnologyInfo(int NumTechnologies, vector <Tech_menu> TechMenu){
+    printf("\nNumTechnologies <technologyCount>: %d\n\n", NumTechnologies);
+    for(int i = 0; i < NumTechnologies; i++){
+        printf("Tech <techName> <libCellCount>: %s %d:\n", TechMenu[i].tech, TechMenu[i].libcell_count);
+        for(int j = 0; j < TechMenu[i].libcell_count; j++){
+            printf("\tLibCell <libCellName> <libCellSizeX> <libCellSizeY> <pinCount>: %s %d %d %d\n", TechMenu[i].libcell[j].libCellName, TechMenu[i].libcell[j].libCellSizeX, TechMenu[i].libcell[j].libCellSizeY, TechMenu[i].libcell[j].pinCount);
+            for(int k = 0; k < TechMenu[i].libcell[j].pinCount; k++){
+                printf("\t\tPin <pinName> <pinLocationX> <pinLocationY>: %s %d %d\n", TechMenu[i].libcell[j].pinarray[k].pinName, TechMenu[i].libcell[j].pinarray[k].pinLocationX, TechMenu[i].libcell[j].pinarray[k].pinLocationY);
+            }
+            printf("\n");
+        }
+        printf("\n\n");
+    }
+    printf("\n");
+}
+
 void readDieInfo(FILE *input, Die *top_die, Die *bottom_die){
     assert(input);
 
@@ -71,75 +116,20 @@ void printHybridTerminalInfo(Hybrid_terminal terminal){
     printf("TerminalSpacing <spacing>: %d\n\n", terminal.spacing);
 }
 
-void readTechnologyInfo(FILE *input, int *NumTechnologies, Tech_menu **TechMenu){
-    assert(input);
-
-    //read number of technologies
-    fscanf(input, "%*s %d",&(*NumTechnologies));
-    //allocate memory for the tech menu, might be 2 tech or 1 tech ex: TA TB (2) / TA TA (1) / TB TB (1)
-    *TechMenu = (Tech_menu *)malloc(sizeof(Tech_menu) * (*NumTechnologies));
-
-    for(int i = 0; i < *NumTechnologies; i++){
-        fscanf(input, "%*s %s %d", ((*TechMenu)[i]).tech, &((*TechMenu)[i].libcell_count));
-        ((*TechMenu)[i]).libcell = (Libcell *)malloc(sizeof(Libcell) * ((*TechMenu)[i]).libcell_count);
-
-        //read libcell libcell count time
-        for(int j = 0; j < (*TechMenu)[i].libcell_count; j++){
-            fscanf(input, "%*s %s %d %d %d", (*TechMenu)[i].libcell[j].libCellName, &((*TechMenu)[i].libcell[j].libCellSizeX), &((*TechMenu)[i].libcell[j].libCellSizeY), &((*TechMenu)[i].libcell[j].pinCount));
-            ((*TechMenu)[i]).libcell[j].pinarray = (Pin *)malloc(sizeof(Pin) * ((*TechMenu)[i]).libcell[j].pinCount);
-
-            //read pinarray pinarray_count time
-            for(int k = 0; k < (*TechMenu)[i].libcell[j].pinCount; k++){
-                fscanf(input, "%*s %s %d %d", (*TechMenu)[i].libcell[j].pinarray[k].pinName, &((*TechMenu)[i].libcell[j].pinarray[k].pinLocationX), &((*TechMenu)[i].libcell[j].pinarray[k].pinLocationY));
-            }
-        }
-    }
-    read_one_blank_line(input);
-}
-
-void freeTech_menu(int NumTechnologies, Tech_menu **TechMenu){
-    for(int i = 0; i < NumTechnologies; i++){
-        for(int j = 0; j < (*TechMenu)[i].libcell_count; j++){
-            free((*TechMenu)[i].libcell[j].pinarray);
-        }
-        free((*TechMenu)[i].libcell);
-    }
-    free(*TechMenu);
-}
-
-void printTechnologyInfo(int NumTechnologies, Tech_menu *TechMenu){
-    printf("\nNumTechnologies <technologyCount>: %d\n\n", NumTechnologies);
-    for(int i = 0; i < NumTechnologies; i++){
-        printf("Tech <techName> <libCellCount>: %s %d:\n", TechMenu[i].tech, TechMenu[i].libcell_count);
-        for(int j = 0; j < TechMenu[i].libcell_count; j++){
-            printf("\tLibCell <libCellName> <libCellSizeX> <libCellSizeY> <pinCount>: %s %d %d %d\n", TechMenu[i].libcell[j].libCellName, TechMenu[i].libcell[j].libCellSizeX, TechMenu[i].libcell[j].libCellSizeY, TechMenu[i].libcell[j].pinCount);
-            for(int k = 0; k < TechMenu[i].libcell[j].pinCount; k++){
-                printf("\t\tPin <pinName> <pinLocationX> <pinLocationY>: %s %d %d\n", TechMenu[i].libcell[j].pinarray[k].pinName, TechMenu[i].libcell[j].pinarray[k].pinLocationX, TechMenu[i].libcell[j].pinarray[k].pinLocationY);
-            }
-            printf("\n");
-        }
-        printf("\n\n");
-    }
-    printf("\n");
-}
-
-void readInstanceInfo(FILE *input, int *NumInstances, Instance **InstanceArray){
+void readInstanceInfo(FILE *input, int *NumInstances, vector <Instance> &InstanceArray){
     assert(input);
     
     fscanf(input, "%*s %d", &(*NumInstances));
-    //allocate memory for InstanceArray:
-    *InstanceArray = (Instance *)malloc(sizeof(Instance) * (*NumInstances));
+
     for(int i = 0; i < *NumInstances; i++){
-        fscanf(input, "%*s %s %s", (*InstanceArray)[i].instName, (*InstanceArray)[i].libCellName);
+        Instance temp;
+        fscanf(input, "%*s %s %s", temp.instName, temp.libCellName);
+        InstanceArray.emplace_back(temp);
     }
     read_one_blank_line(input);
 }
 
-void freeInstanceArray(int NumInstances, Instance **InstanceArray){
-    free(*InstanceArray);
-}
-
-void printInstanceInfo(int NumInstances, Instance *InstanceArray){
+void printInstanceInfo(int NumInstances, vector <Instance> InstanceArray){
     printf("NumInstances <instanceCount>: %d\n", NumInstances);
     for(int i = 0; i < NumInstances; i++){
         printf("\tInst <instName> <libCellName>: %s %s\n", InstanceArray[i].instName, InstanceArray[i].libCellName);
@@ -147,39 +137,33 @@ void printInstanceInfo(int NumInstances, Instance *InstanceArray){
     printf("\n");
 }
 
-void readNetInfo(FILE *input, int *NumNets, Net **NetArray){
+void readNetInfo(FILE *input, int *NumNets, vector <Net> &NetArray){
     assert(input);
 
     fscanf(input, "%*s %d", &(*NumNets));
-    //allocate memory for NetArray:
-    *NetArray = (Net *)malloc(sizeof(Net) * (*NumNets));
-
     for(int i = 0; i < *NumNets; i++){
-        fscanf(input, "%*s %s %d", (*NetArray)[i].netName , &(*NetArray)[i].numPins);
+        Net temp;
+        fscanf(input, "%*s %s %d", temp.netName , &temp.numPins);
 
         //allocate memory for the detail connection in the net
-        (*NetArray)[i].Connection = (NetConnection *)malloc(sizeof(NetConnection) * (*NetArray)[i].numPins);
+        vector <NetConnection> temp_connection(temp.numPins);
 
-        for(int j = 0; j < (*NetArray)[i].numPins; j++){
+        for(int j = 0; j < temp.numPins; j++){
             char buffer[BUFFER_SIZE];
             fscanf(input, "%*s %s", buffer);
             //divide the string by using delimiter "/"
             char *token = strtok(buffer, "/");
-            strcpy((*NetArray)[i].Connection[j].instName, token);
+            strcpy(temp_connection[j].instName, token);
             token = strtok(NULL, " ");
-            strcpy((*NetArray)[i].Connection[j].libPinName, token);
+            strcpy(temp_connection[j].libPinName, token);
         }
+        temp.Connection = temp_connection;
+        NetArray.emplace_back(temp);
     }
+    fclose(input);
 }
 
-void freeNetArray(int NumNets, Net **NetArray){
-    for(int i = 0; i < NumNets; i++){
-        free((*NetArray)[i].Connection);
-    }
-    free(*NetArray); 
-}
-
-void printNetInfo(int NumNets, Net *NetArray){
+void printNetInfo(int NumNets, vector <Net> NetArray){
     printf("\nNumNets <netCount>: %d\n", NumNets);
     for(int i = 0; i < NumNets; i++){
         printf("\tNet <netName> <numPins>: %s %d\n", NetArray[i].netName, NetArray[i].numPins);
@@ -189,12 +173,4 @@ void printNetInfo(int NumNets, Net *NetArray){
         printf("\n");
     }
     printf("\n");
-}
-
-void realAllInfo(FILE *input, int *NumTechnologies, Tech_menu **TechMenu, Die *top_die, Die *bottom_die, Hybrid_terminal *terminal, int *NumInstances, Instance **InstanceArray, int *NumNets, Net **NetArray){
-    readTechnologyInfo(input, NumTechnologies, TechMenu);
-    readDieInfo(input, top_die, bottom_die);
-    readHybridTerminalInfo(input, terminal);
-    readInstanceInfo(input, NumInstances, InstanceArray);
-    readNetInfo(input, NumNets, NetArray);
 }

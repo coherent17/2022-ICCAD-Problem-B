@@ -1,3 +1,8 @@
+#include <vector>
+
+using namespace std;
+using std::vector;
+
 #ifndef _READFILE_H_
 #define _READFILE_H_
 
@@ -6,6 +11,26 @@
 #define LIBCELL_NAME_SIZE 10
 #define INSTANCE_NAME_SIZE 10
 #define NET_NAME_SIZE 10
+
+typedef struct _pin{
+    char pinName[PIN_NAME_SIZE]; //P1, P2, ...
+    int pinLocationX;
+    int pinLocationY;
+}Pin;
+
+typedef struct _Libcell{
+    char libCellName[LIBCELL_NAME_SIZE]; //MC1,MC2...
+    int libCellSizeX;
+    int libCellSizeY;
+    int pinCount;
+    vector <Pin> pinarray;
+}Libcell;
+
+typedef struct _tech_menu{
+    char tech[TECH_NAME_SIZE]; //TA,TB
+    int libcell_count;
+    vector <Libcell> libcell;
+}Tech_menu;
 
 typedef struct _die{
     int lowerLeftX;
@@ -21,7 +46,6 @@ typedef struct _die{
     int rowHeight;
     int repeatCount;
     char tech[TECH_NAME_SIZE];
-
 }Die;
 
 typedef struct _terminal{
@@ -29,26 +53,6 @@ typedef struct _terminal{
     int sizeY;
     int spacing;   //between terminals and between terminal and boundary
 }Hybrid_terminal;
-
-typedef struct _pin{
-    char pinName[PIN_NAME_SIZE]; //P1, P2, ...
-    int pinLocationX;
-    int pinLocationY;
-}Pin;
-
-typedef struct _Libcell{
-    char libCellName[LIBCELL_NAME_SIZE]; //MC1,MC2...
-    int libCellSizeX;
-    int libCellSizeY;
-    int pinCount;
-    Pin *pinarray;
-}Libcell;
-
-typedef struct _tech_menu{
-    char tech[TECH_NAME_SIZE]; //TA,TB
-    int libcell_count;
-    Libcell *libcell;
-}Tech_menu;
 
 typedef struct _Instance{
     char tech[TECH_NAME_SIZE];              //TA, TB, ...
@@ -65,22 +69,18 @@ typedef struct _NetConnection{
 typedef struct _Net{
     char netName[NET_NAME_SIZE];
     int numPins;
-    NetConnection *Connection;
+    vector <NetConnection> Connection;
 }Net;
 
-
-
-
+void readTechnologyInfo(FILE *input, int *NumTechnologies, vector <Tech_menu> &TechMenu);
+void printTechnologyInfo(int NumTechnologies, vector <Tech_menu> TechMenu);
+void readDieInfo(FILE *input, Die *top_die, Die *bottom_die);
 void printDieInfo(Die top_die, Die bottom_die);
+void readHybridTerminalInfo(FILE *input, Hybrid_terminal *terminal);
 void printHybridTerminalInfo(Hybrid_terminal terminal);
-void printTechnologyInfo(int NumTechnologies, Tech_menu *TechMenu);
-void printInstanceInfo(int NumInstances, Instance *InstanceArray);
-void printNetInfo(int NumNets, Net *NetArray);
-
-void freeTech_menu(int NumTechnologies, Tech_menu **TechMenu);
-void freeInstanceArray(int NumInstances, Instance **InstanceArray);
-void freeNetArray(int NumNets, Net **NetArray);
-
-void realAllInfo(FILE *input, int *NumTechnologies, Tech_menu **, Die *top_die, Die *bottom_die, Hybrid_terminal *terminal, int *NumInstances, Instance **InstanceArray, int *NumNets, Net **NetArray);
+void readInstanceInfo(FILE *input, int *NumInstances, vector <Instance> &InstanceArray);
+void printInstanceInfo(int NumInstances, vector <Instance> InstanceArray);
+void readNetInfo(FILE *input, int *NumNets, vector <Net> &NetArray);
+void printNetInfo(int NumNets, vector <Net> NetArray);
 
 #endif

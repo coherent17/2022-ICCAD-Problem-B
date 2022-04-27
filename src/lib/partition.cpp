@@ -6,7 +6,7 @@
 
 #define TEMP_BUFFER_SIZE 10
 
-void OutputPartitionFormat(int NumNets, int NumInstances, Net *NetArray){
+void OutputPartitionFormat(int NumNets, int NumInstances, vector <Net> NetArray){
 	FILE *shmetisInput = fopen("Netlist.hgr", "w");
 	fprintf(shmetisInput, "%d %d\n", NumNets, NumInstances);
 
@@ -28,7 +28,7 @@ void PartitionInstance(){
 	system("./src/hmetis/shmetis Netlist.hgr 2 5 > log.txt");
 }
 
-void ReadPartitionResult(Instance *InstanceArray, int NumInstances){
+void ReadPartitionResult(vector <Instance> &InstanceArray, int NumInstances){
 	FILE *shmetisResult = fopen("Netlist.hgr.part.2", "r");
 	for(int i = 0; i < NumInstances; i++){
 		fscanf(shmetisResult, "%d", &(InstanceArray[i].whichDie));
@@ -36,7 +36,7 @@ void ReadPartitionResult(Instance *InstanceArray, int NumInstances){
 	fclose(shmetisResult);
 }
 
-void printPartitionResult(Instance *InstanceArray, int NumInstances){
+void printPartitionResult(vector <Instance> InstanceArray, int NumInstances){
 	for(int i = 0; i < NumInstances; i++){
 		printf("%d \n", InstanceArray[i].whichDie);
 	}
