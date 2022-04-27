@@ -2,8 +2,6 @@ CC = g++
 CFLAGS = -g -Wall
 BINS = main
 SRC_DIRS := src/lib
-OUTPUT_FILE = Netlist* log.txt
-
 
 CHECKCC = valgrind
 CHECKFLAGS = --leak-check=full -s --show-leak-kinds=all
@@ -23,4 +21,4 @@ do:
 	$(CHECKCC) $(CHECKFLAGS) ./main Benchmark/case1.txt
 
 clean:
-	rm -rf $(OUTPUT_FILE)  src/lib/*.o main
+	rm -rf src/lib/*.o main
