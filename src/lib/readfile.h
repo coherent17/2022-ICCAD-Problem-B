@@ -15,18 +15,19 @@ typedef struct _die{
     int size_x;
     int size_y;
     int MaxUtil;
-    int startX;
-    int startY;
+    int startX;                 //start x of row
+    int startY;                 //start y of row
     int rowLength;
     int rowHeight;
     int repeatCount;
     char tech[TECH_NAME_SIZE];
+
 }Die;
 
 typedef struct _terminal{
     int sizeX;
     int sizeY;
-    int spacing;
+    int spacing;   //between terminals and between terminal and boundary
 }Hybrid_terminal;
 
 typedef struct _pin{
