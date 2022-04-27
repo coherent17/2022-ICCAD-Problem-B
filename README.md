@@ -1,7 +1,7 @@
 # 2022 ICCAD Problem B 
 Problem B: 3D Placement with D2D Vertical Connections
 
-> Auther Chi-En Ho Chieh-En Wang
+> Author Chi-En Ho Chieh-En Wang
 
 2022 ICCAD Problem B website: 
 http://iccad-contest.org/Problems.html
@@ -38,14 +38,98 @@ Minimum the HPWL of the 3D placement
 3. Place the Hydrogen Bond so that minimize the HPWL
 
 ## Input Format
-### 1. Netlist 
-### 2. Die size for both bottom die and top die (would be the same)
 
+### 1. Netlist 
+#### *Syntax*
+```Syntax=
+NumInstances <instanceCount> 
+Inst <instName> <libCellName> 
+NumNets <netCount> 
+Net <netName> <numPins> 
+Pin <instName>/<libPinName> 
+```
+#### *Example*
+```syntax=
+NumInstances 2 
+Inst C1 MC1 
+Inst C2 MC3 
+NumNets 1 
+Net N1 2 
+Pin C1/P2 
+Pin C2/P1 
+```
+
+### 2. Die size for both bottom die and top die (would be the same)
+#### *Syntax*
+```Syntax=
+DieSize <lowerLeftX> <lowerLeftY> <upperRightX> <upperRightY> 
+```
+#### *Example*
+```Syntax=
+DieSize 0 0 500 450 
+```
 ### 3. Max placement utilization ratio for each die
-### 5. Placement rows of each die  
-### 7. Std cell library for each die. 
+![](https://i.imgur.com/52UWNh7.png)
+
+#### *Syntax*
+```Syntax=
+TopDieMaxUtil <util> 
+BottomDieMaxUtil <util> 
+```
+#### *Example*
+```Syntax=
+TopDieMaxUtil 75 
+BottomDieMaxUtil 80 
+```
+### 4. Placement rows of each die  
+* The given rows would start from (0, 0) and cover the entire die. 
+#### *Syntax*
+```Syntax=
+TopDieRows <startX> <startY> <rowLength> <rowHeight> <repeatCount> 
+BottomDieRows <startX> <startY> <rowLength> <rowHeight> <repeatCount> 
+```
+#### *Example*
+```Syntax=
+TopDieRows 0 0 500 10 45 
+BottomDieRows 0 0 500 15 30 
+```
+### 5. Std cell library for each die. 
 * If the 2 dies are with different technologies, the given std cell library for each die would have equivalent logic 
-### 8. Hybrid bonding terminal size & the required spacing between 2 terminals and between terminal and die boundary
+#### *Syntax*
+```Syntax=
+NumTechnologies <technologyCount> 
+Tech <techName> <libCellCount> 
+LibCell <libCellName> <libCellSizeX> <libCellSizeY> <pinCount> 
+Pin <pinName> <pinLocationX> <pinLocationY> 
+```
+#### *Example*
+```Syntax=
+NumTechnologies 2 
+Tech TA 2 
+LibCell MC1 5 10 1 
+Pin P1 2 7 
+LibCell MC2 7 10 2 
+Pin P1 5 3 
+Pin P2 3 6 
+Tech TB 2 
+LibCell MC1 5 15 1 
+Pin P1 2 11 
+LibCell MC2 7 15 2 
+Pin P1 2 12 
+Pin P2 3 3 
+```
+### 6. Hybrid bonding terminal size & the required spacing
+* Hybrid bonding terminal size & the required spacing between 2 terminals and between terminal and die boundary
+#### *Syntax*
+```Syntax=
+TerminalSize <sizeX> <sizeY> 
+TerminalSpacing <spacing> 
+```
+#### *Example*
+```Syntax=
+TerminalSize 20 20 
+TerminalSpacing 15 
+```
 ## Output Format
 
 ### 1. Top die placement result
@@ -55,7 +139,7 @@ Minimum the HPWL of the 3D placement
 TopDiePlacement <InstCount> 
 Inst <instName> <locationX> <locationY> 
 ```
-    
+
 #### *Example*
 ```Syntax=
 TopDiePlacement 2 
