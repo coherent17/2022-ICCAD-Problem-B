@@ -20,7 +20,7 @@ $(BINS): src/main.cpp $(OBJS)
 	$(CC) $(CFLAGS)  $^ -o $@
 
 do:
-	$(CHECKCC) $(CHECKFLAGS) ./main
+	$(CHECKCC) $(CHECKFLAGS) ./main Benchmark/case1.txt
 
 clean:
 	rm -rf $(OUTPUT_FILE)  src/lib/*.o main
