@@ -3,8 +3,9 @@
 #include "../src/lib/readfile.h"
 #include "../src/lib/partition.h"
 
-int main(){
-	FILE *input = fopen("Benchmark/case1.txt", "r");
+int main(int argc, char *argv[]){
+	char *inputName = *(argv + 1);
+	FILE *input = fopen(inputName, "r");
 	assert(input);
 
 	Die top_die, bottom_die;
@@ -15,6 +16,8 @@ int main(){
 	Instance *InstanceArray = NULL;
 	int NumNets;
 	Net *NetArray = NULL;
+
+	
 	readTechnologyInfo(input, &NumTechnologies, &TechMenu);
 	printTechnologyInfo(NumTechnologies, TechMenu);
 	readDieInfo(input, &top_die, &bottom_die);
@@ -29,6 +32,11 @@ int main(){
 	
 	OutputPartitionFormat(NumNets, NumInstances, NetArray);
 	PartitionInstance();
+
+	//read the shmetis partition result
+	ReadPartitionResult(InstanceArray, NumInstances);
+	printPartitionResult(InstanceArray, NumInstances);
+
 
 	freeTech_menu(NumTechnologies, &TechMenu);
 	freeInstanceArray(NumInstances, &InstanceArray);

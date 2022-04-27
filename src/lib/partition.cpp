@@ -27,3 +27,17 @@ void PartitionInstance(){
 	system("chmod +x src/hmetis/shmetis");
 	system("./src/hmetis/shmetis Netlist.hgr 2 5 > log.txt");
 }
+
+void ReadPartitionResult(Instance *InstanceArray, int NumInstances){
+	FILE *shmetisResult = fopen("Netlist.hgr.part.2", "r");
+	for(int i = 0; i < NumInstances; i++){
+		fscanf(shmetisResult, "%d", &(InstanceArray[i].whichDie));
+	}
+	fclose(shmetisResult);
+}
+
+void printPartitionResult(Instance *InstanceArray, int NumInstances){
+	for(int i = 0; i < NumInstances; i++){
+		printf("%d \n", InstanceArray[i].whichDie);
+	}
+}
