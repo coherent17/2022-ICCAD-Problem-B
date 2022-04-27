@@ -190,3 +190,11 @@ void printNetInfo(int NumNets, Net *NetArray){
     }
     printf("\n");
 }
+
+void realAllInfo(FILE *input, int *NumTechnologies, Tech_menu **TechMenu, Die *top_die, Die *bottom_die, Hybrid_terminal *terminal, int *NumInstances, Instance **InstanceArray, int *NumNets, Net **NetArray){
+    readTechnologyInfo(input, NumTechnologies, TechMenu);
+    readDieInfo(input, top_die, bottom_die);
+    readHybridTerminalInfo(input, terminal);
+    readInstanceInfo(input, NumInstances, InstanceArray);
+    readNetInfo(input, NumNets, NetArray);
+}

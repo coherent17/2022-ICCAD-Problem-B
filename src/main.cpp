@@ -18,17 +18,12 @@ int main(int argc, char *argv[]){
 	Net *NetArray = NULL;
 
 	
-	readTechnologyInfo(input, &NumTechnologies, &TechMenu);
-	printTechnologyInfo(NumTechnologies, TechMenu);
-	readDieInfo(input, &top_die, &bottom_die);
-	printDieInfo(top_die, bottom_die);
-	readHybridTerminalInfo(input, &terminal);
-	printHybridTerminalInfo(terminal);
-	
-	readInstanceInfo(input, &NumInstances, &InstanceArray);
-	printInstanceInfo(NumInstances, InstanceArray);
-	readNetInfo(input, &NumNets, &NetArray);
-	printNetInfo(NumNets, NetArray);
+	realAllInfo(input, &NumTechnologies, &TechMenu, &top_die, &bottom_die, &terminal, &NumInstances, &InstanceArray, &NumNets, &NetArray);
+	//printTechnologyInfo(NumTechnologies, TechMenu);
+	//printDieInfo(top_die, bottom_die);
+	//printHybridTerminalInfo(terminal);
+	//printInstanceInfo(NumInstances, InstanceArray);
+	//printNetInfo(NumNets, NetArray);
 	
 	OutputPartitionFormat(NumNets, NumInstances, NetArray);
 	PartitionInstance();
@@ -36,7 +31,6 @@ int main(int argc, char *argv[]){
 	//read the shmetis partition result
 	ReadPartitionResult(InstanceArray, NumInstances);
 	printPartitionResult(InstanceArray, NumInstances);
-
 
 	freeTech_menu(NumTechnologies, &TechMenu);
 	freeInstanceArray(NumInstances, &InstanceArray);
