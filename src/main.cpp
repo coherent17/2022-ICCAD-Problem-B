@@ -15,13 +15,13 @@ int main(){
 	Instance *InstanceArray = NULL;
 	int NumNets;
 	Net *NetArray = NULL;
-
+	readTechnologyInfo(input, &NumTechnologies, &TechMenu);
+	printTechnologyInfo(NumTechnologies, TechMenu);
 	readDieInfo(input, &top_die, &bottom_die);
 	printDieInfo(top_die, bottom_die);
 	readHybridTerminalInfo(input, &terminal);
 	printHybridTerminalInfo(terminal);
-	readTechnologyInfo(input, &NumTechnologies, &TechMenu);
-	printTechnologyInfo(NumTechnologies, TechMenu);
+	
 	readInstanceInfo(input, &NumInstances, &InstanceArray);
 	printInstanceInfo(NumInstances, InstanceArray);
 	readNetInfo(input, &NumNets, &NetArray);
