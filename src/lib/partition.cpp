@@ -26,6 +26,7 @@ void OutputPartitionFormat(int NumNets, int NumInstances, vector <Net> NetArray)
 void PartitionInstance(){
 	system("chmod +x src/hmetis/shmetis");
 	system("./src/hmetis/shmetis Netlist.hgr 2 5 > log.txt");
+	system("rm -rf log.txt");
 }
 
 void ReadPartitionResult(vector <Instance> &InstanceArray, int NumInstances){
@@ -34,6 +35,7 @@ void ReadPartitionResult(vector <Instance> &InstanceArray, int NumInstances){
 		fscanf(shmetisResult, "%d", &(InstanceArray[i].whichDie));
 	}
 	fclose(shmetisResult);
+	system("rm -rf Netlist.hgr Netlist.hgr.part.2");
 }
 
 void printPartitionResult(vector <Instance> InstanceArray, int NumInstances){
