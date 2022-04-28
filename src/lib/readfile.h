@@ -70,7 +70,7 @@ typedef struct _Net{
     char netName[NET_NAME_SIZE];
     int numPins;
     vector <NetConnection> Connection;
-}Net;
+}RawNet;
 
 void readTechnologyInfo(FILE *input, int *NumTechnologies, vector <Tech_menu> &TechMenu);
 void printTechnologyInfo(int NumTechnologies, vector <Tech_menu> TechMenu);
@@ -80,7 +80,7 @@ void readHybridTerminalInfo(FILE *input, Hybrid_terminal *terminal);
 void printHybridTerminalInfo(Hybrid_terminal terminal);
 void readInstanceInfo(FILE *input, int *NumInstances, vector <Instance> &InstanceArray);
 void printInstanceInfo(int NumInstances, vector <Instance> InstanceArray);
-void readNetInfo(FILE *input, int *NumNets, vector <Net> &NetArray);
-void printNetInfo(int NumNets, vector <Net> NetArray);
+void readNetInfo(FILE *input, int *NumNets, vector <RawNet> &NetArray);
+void printNetInfo(int NumNets, vector <RawNet> NetArray);
 
 #endif

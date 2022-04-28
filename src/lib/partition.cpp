@@ -6,7 +6,7 @@
 
 #define TEMP_BUFFER_SIZE 10
 
-void OutputPartitionFormat(int NumNets, int NumInstances, vector <Net> NetArray){
+void OutputPartitionFormat(int NumNets, int NumInstances, vector <RawNet> NetArray){
 	FILE *shmetisInput = fopen("Netlist.hgr", "w");
 	fprintf(shmetisInput, "%d %d\n", NumNets, NumInstances);
 

@@ -19,7 +19,7 @@ int main(int argc, char *argv[]){
 	int NumInstances;
 	vector <Instance> InstanceArray;
 	int NumNets;
-	vector <Net> NetArray;
+	vector <RawNet> NetArray;
 
 	//read file part
 	readTechnologyInfo(input, &NumTechnologies, TechMenu);

@@ -137,12 +137,12 @@ void printInstanceInfo(int NumInstances, vector <Instance> InstanceArray){
     printf("\n");
 }
 
-void readNetInfo(FILE *input, int *NumNets, vector <Net> &NetArray){
+void readNetInfo(FILE *input, int *NumNets, vector <RawNet> &NetArray){
     assert(input);
 
     fscanf(input, "%*s %d", &(*NumNets));
     for(int i = 0; i < *NumNets; i++){
-        Net temp;
+        RawNet temp;
         fscanf(input, "%*s %s %d", temp.netName , &temp.numPins);
 
         //allocate memory for the detail connection in the net
@@ -163,7 +163,7 @@ void readNetInfo(FILE *input, int *NumNets, vector <Net> &NetArray){
     fclose(input);
 }
 
-void printNetInfo(int NumNets, vector <Net> NetArray){
+void printNetInfo(int NumNets, vector <RawNet> NetArray){
     printf("\nNumNets <netCount>: %d\n", NumNets);
     for(int i = 0; i < NumNets; i++){
         printf("\tNet <netName> <numPins>: %s %d\n", NetArray[i].netName, NetArray[i].numPins);
