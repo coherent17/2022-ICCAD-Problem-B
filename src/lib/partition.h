@@ -34,6 +34,7 @@ void ReadPartitionResult(TopBottomCellArray *ArrayInfo, int NumInstances, vector
 void printPartitionResult(TopBottomCellArray ArrayInfo, vector <Instance> InstanceArray, vector <int> PartitionResult);
 void GetCellOfNet(vector <RawNet> rawnet, vector <Net> &NetArray, int NumNets);
 void PrintNetArray(vector <Net> NetArray, int NumNets);
-
+void GetNetOfCell(vector <Net> NetArray, TopBottomCellArray *ArrayInfo, vector <int> PartitionResult);
+void printTopBottomCellArray(TopBottomCellArray *ArrayInfo);
 
 #endif

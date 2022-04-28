@@ -102,7 +102,7 @@ void GetCellOfNet(vector <RawNet> rawnet, vector <Net> &NetArray, int NumNets){
 
 void PrintNetArray(vector <Net> NetArray, int NumNets){
 	for(int i=0; i<NumNets; i++){
-		printf("Cell in NetID=%d :\n", NetArray[i].NetID);
+		printf("Cell in NetID=%d : ", NetArray[i].NetID);
 		printf("contains %d cells.\n", NetArray[i].CellNumber);
 		for(int j=0; j<NetArray[i].CellNumber; j++){
 			printf("%d ", NetArray[i].cells[j]);
@@ -112,7 +112,7 @@ void PrintNetArray(vector <Net> NetArray, int NumNets){
 }
 
 void GetNetOfCell(vector <Net> NetArray, TopBottomCellArray *ArrayInfo, vector <int> PartitionResult){
-	vector <int> PartitionIndexResult;
+	vector <int> PartitionIndexResult(PartitionResult.size());
 	int bottomCount = 0;
 	int topCount = 0;
 	for(int i = 0; i < (int)PartitionResult.size(); i++){
@@ -126,16 +126,68 @@ void GetNetOfCell(vector <Net> NetArray, TopBottomCellArray *ArrayInfo, vector <
 		}
 	}
 
+	//temp_netsNumber store the number of the nets that connect to the cell
+	//ex: # of nets connect to C1 = temp_netsNumber[0]
+	vector <int> temp_netsNumber(PartitionResult.size(),0);
+	vector <vector <int>> temp_nets(PartitionResult.size());
 
-
-	for(int i = 0 ; i < (int)NetArray.size(); i++){
-		for(int j=0; j<NetArray[i].CellNumber; j++){
-			int currentCellIndex = NetArray[i].cells[j];
-			if(PartitionResult[currentCellIndex]==0){
-				ArrayInfo.BottomCellArray[PartitionIndexResult[currentCellIndex]]
-			}
-			ArrayInfo
+	for(int i = 0; i < (int)NetArray.size(); i++){
+		for(int j = 0; j < NetArray[i].CellNumber; j++){
+			temp_netsNumber[NetArray[i].cells[j]]++;
+			temp_nets[NetArray[i].cells[j]].emplace_back(i);
 		}
+	}
+
+	// for(int i = 0; i < (int)PartitionResult.size(); i++){
+	// 	printf("%d ", temp_netsNumber[i]);
+	// }
+	// printf("\n");
+
+	// for(int i = 0; i < (int)PartitionResult.size(); i++){
+	// 	for(int j = 0; j < temp_netsNumber[i]; j++){
+	// 		printf("%d ", temp_nets[i][j]);
+	// 	}
+	// 	printf("\n");
+	// }
+	// printf("\n");
+
+
+	//dry-wet seperation
+	for(int i=0; i<(int)PartitionResult.size(); i++){
+		// temp_cell.netsNumber = temp_netsNumber[i];
+		// temp_cell.nets = temp_nets[i];
+		if( PartitionResult[i] == 0){
+			ArrayInfo->BottomCellArray[PartitionIndexResult[i]].netsNumber = temp_netsNumber[i];
+			ArrayInfo->BottomCellArray[PartitionIndexResult[i]].nets = temp_nets[i];
+		}
+		else if( PartitionResult[i] == 1){
+			ArrayInfo->TopCellArray[PartitionIndexResult[i]].netsNumber = temp_netsNumber[i];
+			ArrayInfo->TopCellArray[PartitionIndexResult[i]].nets = temp_nets[i];
+		}
+		assert(PartitionResult[i]!=0 || PartitionResult[i]!=1 );
 	}
 }
 
+void printTopBottomCellArray(TopBottomCellArray *ArrayInfo){
+	printf("BottomCell Number: %d\n", ArrayInfo->BottomCellNumber);
+	for(int i = 0; i < ArrayInfo->BottomCellNumber; i++){
+		printf("\tCell ID: %d\n", ArrayInfo->BottomCellArray[i].cellID);
+		printf("\t\tBelongs to %d Die\n", ArrayInfo->BottomCellArray[i].WhichDie);
+		printf("\t\tThere are %d nets connect to this cell ", ArrayInfo->BottomCellArray[i].netsNumber);
+		for(int j = 0; j < ArrayInfo->BottomCellArray[i].netsNumber; j++){
+			printf("%d ", ArrayInfo->BottomCellArray[i].nets[j]);
+		}
+		printf("\n");
+	}
+
+	printf("TopCell Number: %d\n", ArrayInfo->TopCellNumber);
+	for(int i = 0; i < ArrayInfo->TopCellNumber; i++){
+		printf("\tCell ID: %d\n", ArrayInfo->TopCellArray[i].cellID);
+		printf("\t\tBelongs to %d Die\n", ArrayInfo->TopCellArray[i].WhichDie);
+		printf("\t\tThere are %d nets connect to this cell ", ArrayInfo->TopCellArray[i].netsNumber);
+		for(int j = 0; j < ArrayInfo->TopCellArray[i].netsNumber; j++){
+			printf("%d ", ArrayInfo->TopCellArray[i].nets[j]);
+		}
+		printf("\n");
+	}
+}

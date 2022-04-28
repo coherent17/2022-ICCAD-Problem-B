@@ -21,7 +21,6 @@ int main(int argc, char *argv[]){
 	int NumNets;
 	vector <RawNet> rawnet;
 
-
 	vector <int> PartitionResult;
 	vector <Net> NetArray;
 	TopBottomCellArray ArrayInfo;
@@ -45,9 +44,12 @@ int main(int argc, char *argv[]){
 	ReadPartitionResult(&ArrayInfo, NumInstances, PartitionResult);
 	printPartitionResult(ArrayInfo, InstanceArray, PartitionResult);
 
-	//0428 test
+
+	//create netarray and cellarray
 	GetCellOfNet(rawnet, NetArray, NumNets);
 	PrintNetArray(NetArray, NumNets);
+	GetNetOfCell(NetArray, &ArrayInfo, PartitionResult);
+	printTopBottomCellArray(&ArrayInfo);
 
 	return 0;
 }
