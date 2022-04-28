@@ -58,7 +58,6 @@ typedef struct _Instance{
     char tech[TECH_NAME_SIZE];              //TA, TB, ...
     char instName[INSTANCE_NAME_SIZE];      //C1, C2, ...
     char libCellName[LIBCELL_NAME_SIZE];    //MC1, MC2, ...
-    int whichDie;                          //(0, 1) = (bottom die, top die)
 }Instance;
 
 typedef struct _NetConnection{
@@ -66,7 +65,7 @@ typedef struct _NetConnection{
     char libPinName[PIN_NAME_SIZE];         //P1, P2, ...
 }NetConnection;
 
-typedef struct _Net{
+typedef struct _RawNet{
     char netName[NET_NAME_SIZE];
     int numPins;
     vector <NetConnection> Connection;

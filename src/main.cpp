@@ -19,7 +19,12 @@ int main(int argc, char *argv[]){
 	int NumInstances;
 	vector <Instance> InstanceArray;
 	int NumNets;
-	vector <RawNet> NetArray;
+	vector <RawNet> rawnet;
+
+
+	vector <int> PartitionResult;
+	vector <Net> NetArray;
+	TopBottomCellArray ArrayInfo;
 
 	//read file part
 	readTechnologyInfo(input, &NumTechnologies, TechMenu);
@@ -30,15 +35,19 @@ int main(int argc, char *argv[]){
 	printHybridTerminalInfo(terminal);
 	readInstanceInfo(input, &NumInstances, InstanceArray);
 	printInstanceInfo(NumInstances, InstanceArray);
-	readNetInfo(input, &NumNets, NetArray);
-	printNetInfo(NumNets, NetArray);
+	readNetInfo(input, &NumNets, rawnet);
+	printNetInfo(NumNets, rawnet);
 
 
 	//partition part
-	OutputPartitionFormat(NumNets, NumInstances, NetArray);
+	OutputPartitionFormat(NumNets, NumInstances, rawnet);
 	PartitionInstance();
-	ReadPartitionResult(InstanceArray, NumInstances);
-	printPartitionResult(InstanceArray, NumInstances);
+	ReadPartitionResult(&ArrayInfo, NumInstances, PartitionResult);
+	printPartitionResult(ArrayInfo, InstanceArray, PartitionResult);
+
+	//0428 test
+	GetCellOfNet(rawnet, NetArray, NumNets);
+	PrintNetArray(NetArray, NumNets);
 
 	return 0;
 }
