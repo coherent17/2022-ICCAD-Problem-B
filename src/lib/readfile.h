@@ -79,7 +79,7 @@ void readHybridTerminalInfo(FILE *input, Hybrid_terminal *terminal);
 void printHybridTerminalInfo(Hybrid_terminal terminal);
 void readInstanceInfo(FILE *input, int *NumInstances, vector <Instance> &InstanceArray);
 void printInstanceInfo(int NumInstances, vector <Instance> InstanceArray);
-void readNetInfo(FILE *input, int *NumNets, vector <RawNet> &NetArray);
-void printNetInfo(int NumNets, vector <RawNet> NetArray);
+void readNetInfo(FILE *input, int *NumNets, vector <RawNet> &rawnet);
+void printNetInfo(int NumNets, vector <RawNet> rawnet);
 
 #endif
