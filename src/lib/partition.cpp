@@ -138,19 +138,6 @@ void GetNetOfCell(vector <Net> NetArray, TopBottomCellArray *ArrayInfo, vector <
 		}
 	}
 
-	// for(int i = 0; i < (int)PartitionResult.size(); i++){
-	// 	printf("%d ", temp_netsNumber[i]);
-	// }
-	// printf("\n");
-
-	// for(int i = 0; i < (int)PartitionResult.size(); i++){
-	// 	for(int j = 0; j < temp_netsNumber[i]; j++){
-	// 		printf("%d ", temp_nets[i][j]);
-	// 	}
-	// 	printf("\n");
-	// }
-	// printf("\n");
-
 
 	//dry-wet seperation
 	for(int i=0; i<(int)PartitionResult.size(); i++){
