@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -ggdb3
 BINS = main
 SRC_DIRS := src/lib
 
