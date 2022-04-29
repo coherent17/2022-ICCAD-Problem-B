@@ -26,7 +26,7 @@ void OutputPartitionFormat(int NumNets, int NumInstances, vector <RawNet> NetArr
 //using shmetis to do 2-way partition and redirect the output stream to log.txt
 void PartitionInstance(){
 	system("chmod +x src/hmetis/shmetis");
-	system("./src/hmetis/shmetis Netlist.hgr 2 5 > log.txt");
+	system("./src/hmetis/shmetis Netlist.hgr 2 4 > log.txt");
 }
 
 //read cut size 

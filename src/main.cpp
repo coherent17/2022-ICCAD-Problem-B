@@ -59,10 +59,11 @@ int main(int argc, char *argv[]){
 
 
 	//initial placement
-	InitializePlacement(&bottom_die, ArrayInfo, 0);
-	InitializePlacement(&top_die, ArrayInfo, 1);
-	printPlacementState(bottom_die);
-	printPlacementState(top_die);
+	bool PartitionAgain;
+	InitializePlacement(&bottom_die, ArrayInfo, 0, &PartitionAgain);
+	printPlacementState(bottom_die, PartitionAgain);
+	InitializePlacement(&top_die, ArrayInfo, 1, &PartitionAgain);
+	printPlacementState(top_die, PartitionAgain);
 
 	return 0;
 }

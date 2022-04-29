@@ -6,7 +6,7 @@
 
 #define EMPTY_STATE -1
 
-void InitializePlacement(Die *currentDie, TopBottomCellArray ArrayInfo, int flag);
-void printPlacementState(Die current_die);
+void InitializePlacement(Die *currentDie, TopBottomCellArray ArrayInfo, int flag, bool *PartitionAgain);
+void printPlacementState(Die current_die, bool PartitionAgain);
 
 #endif
