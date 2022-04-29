@@ -46,6 +46,7 @@ typedef struct _die{
     int rowHeight;
     int repeatCount;
     char tech[TECH_NAME_SIZE];
+    vector <vector <int>> PlacementState;
 }Die;
 
 typedef struct _terminal{

@@ -6,7 +6,7 @@
 #include "readfile.h"
 
 #define TEMP_BUFFER_SIZE 10
-
+#define WORD_BUFFER_SIZE 1000
 void OutputPartitionFormat(int NumNets, int NumInstances, vector <RawNet> NetArray){
 	FILE *shmetisInput = fopen("Netlist.hgr", "w");
 	fprintf(shmetisInput, "%d %d\n", NumNets, NumInstances);
@@ -27,9 +27,25 @@ void OutputPartitionFormat(int NumNets, int NumInstances, vector <RawNet> NetArr
 void PartitionInstance(){
 	system("chmod +x src/hmetis/shmetis");
 	system("./src/hmetis/shmetis Netlist.hgr 2 5 > log.txt");
-	system("rm -rf log.txt");
 }
 
+//read cut size 
+void ReadCutSize(int *NumTerminal){
+	FILE *input=fopen("log.txt","r");
+    char current[WORD_BUFFER_SIZE];
+	char last[WORD_BUFFER_SIZE];
+	while(fscanf(input,"%s",current)!=EOF){
+		if(strncmp(current,"Hyperedge",9)==0){
+			strcpy(last,current);
+		}else if((strncmp(current,"Cut:",4)==0) && strncmp(last,"Hyperedge",8)==0){
+			fscanf(input,"%d",&(*NumTerminal));
+			printf("Numterminal = %d \n", *NumTerminal);
+			fclose(input);
+			break;
+		}
+	}
+	system("rm -rf log.txt");
+}
 void ReadPartitionResult(TopBottomCellArray *ArrayInfo, int NumInstances, vector <int> &PartitionResult){
 	FILE *shmetisResult = fopen("Netlist.hgr.part.2", "r");
 	int BottomCellCount = 0;
@@ -59,8 +75,24 @@ void ReadPartitionResult(TopBottomCellArray *ArrayInfo, int NumInstances, vector
 	}
 	(*ArrayInfo).BottomCellNumber = BottomCellCount;
 	(*ArrayInfo).TopCellNumber = TopCellCount;
+
 	fclose(shmetisResult);
-	system("rm -rf Netlist.hgr");
+	system("rm -rf Netlist.hgr Netlist.hgr.part.2");
+}
+
+//After partition, update the instanceArray.tech 
+void UpdateInstanceArray(vector <Instance> &InstanceArray, vector <int> PartitionResult, Die top_die, Die bottom_die){
+	for(int i = 0; i < (int)InstanceArray.size(); i++){
+		if(PartitionResult[i] == 0){
+			strcpy(InstanceArray[i].tech, bottom_die.tech);
+		}
+		else if(PartitionResult[i] == 1){
+			strcpy(InstanceArray[i].tech, top_die.tech);
+		}
+		else {
+			assert(PartitionResult[i] != 0 || PartitionResult[i] != 1);
+		}
+	}
 }
 
 void printPartitionResult(TopBottomCellArray ArrayInfo, vector <Instance> InstanceArray, vector <int> PartitionResult){
@@ -69,15 +101,17 @@ void printPartitionResult(TopBottomCellArray ArrayInfo, vector <Instance> Instan
 	}
 	printf("\n");
 
-	printf("<Bottom Die Data>: contains %d Standard Cells\n", ArrayInfo.BottomCellNumber);
+	printf("<Bottom Die Data>: contains %d Cells\n", ArrayInfo.BottomCellNumber);
 	for(int i = 0; i < ArrayInfo.BottomCellNumber; i++){
 		printf("Cell name: %s\n", InstanceArray[ArrayInfo.BottomCellArray[i].cellID].instName);
+		printf("Cell tech: %s\n", InstanceArray[ArrayInfo.BottomCellArray[i].cellID].tech);
 		printf("Been Partition In %d\n", ArrayInfo.BottomCellArray[i].WhichDie);
 	}
 
-	printf("<Top Die Data>: contains %d Standard Cells\n", ArrayInfo.TopCellNumber);
+	printf("<Top Die Data>: contains %d Cells\n", ArrayInfo.TopCellNumber);
 	for(int i = 0; i < ArrayInfo.TopCellNumber; i++){
 		printf("Cell name: %s\n", InstanceArray[ArrayInfo.TopCellArray[i].cellID].instName);
+		printf("Cell tech: %s\n", InstanceArray[ArrayInfo.TopCellArray[i].cellID].tech);
 		printf("Been Partition In %d\n", ArrayInfo.TopCellArray[i].WhichDie);
 	}
 }
@@ -126,6 +160,8 @@ void GetNetOfCell(vector <Net> NetArray, TopBottomCellArray *ArrayInfo, vector <
 		}
 	}
 
+	ArrayInfo->PartitionIndexResult = PartitionIndexResult;
+
 	//temp_netsNumber store the number of the nets that connect to the cell
 	//ex: # of nets connect to C1 = temp_netsNumber[0]
 	vector <int> temp_netsNumber(PartitionResult.size(),0);
@@ -141,8 +177,6 @@ void GetNetOfCell(vector <Net> NetArray, TopBottomCellArray *ArrayInfo, vector <
 
 	//dry-wet seperation
 	for(int i=0; i<(int)PartitionResult.size(); i++){
-		// temp_cell.netsNumber = temp_netsNumber[i];
-		// temp_cell.nets = temp_nets[i];
 		if( PartitionResult[i] == 0){
 			ArrayInfo->BottomCellArray[PartitionIndexResult[i]].netsNumber = temp_netsNumber[i];
 			ArrayInfo->BottomCellArray[PartitionIndexResult[i]].nets = temp_nets[i];
@@ -155,7 +189,65 @@ void GetNetOfCell(vector <Net> NetArray, TopBottomCellArray *ArrayInfo, vector <
 	}
 }
 
-void printTopBottomCellArray(TopBottomCellArray *ArrayInfo){
+
+void getSizeOfCellArray(TopBottomCellArray *ArrayInfo, vector <Tech_menu> TechMenu, Die top_die, Die bottom_die, vector <Instance> InstanceArray){	
+	//start from bottomDie
+	char bottomTech[TECH_NAME_SIZE];
+	strncpy(bottomTech, bottom_die.tech, strlen(bottom_die.tech));
+	for(int i = 0; i < ArrayInfo->BottomCellNumber; i++){
+		//get current libcellname from instance array
+		char current_libCellName[LIBCELL_NAME_SIZE];
+		strncpy(current_libCellName, InstanceArray[ArrayInfo->BottomCellArray[i].cellID].libCellName, strlen(InstanceArray[ArrayInfo->BottomCellArray[i].cellID].libCellName));
+		//find the correct techMenu (TA, TB)
+		for(int j = 0; j < (int)TechMenu.size(); j++){
+			if(strncmp(TechMenu[j].tech, bottomTech, strlen(TechMenu[j].tech)) == 0){
+
+				//find the correct libcell
+				for(int k = 0; k < TechMenu[j].libcell_count; k++){
+					if(strncmp(current_libCellName,TechMenu[j].libcell[k].libCellName, strlen(TechMenu[j].libcell[k].libCellName)) == 0){
+						ArrayInfo->BottomCellArray[i].libCellSizeX = TechMenu[j].libcell[k].libCellSizeX;
+						ArrayInfo->BottomCellArray[i].libCellSizeY = TechMenu[j].libcell[k].libCellSizeY;
+					}
+				}
+			}
+		}
+	}
+
+	//topDie
+	char topTech[TECH_NAME_SIZE];
+	strncpy(topTech, top_die.tech, strlen(top_die.tech));
+	for(int i = 0; i < ArrayInfo->TopCellNumber; i++){
+		//get current libcellname from instance array
+		char current_libCellName[LIBCELL_NAME_SIZE];
+		strncpy(current_libCellName, InstanceArray[ArrayInfo->TopCellArray[i].cellID].libCellName, strlen(InstanceArray[ArrayInfo->TopCellArray[i].cellID].libCellName));
+		//find the correct techMenu (TA, TB)
+		for(int j = 0; j < (int)TechMenu.size(); j++){
+			if(strncmp(TechMenu[j].tech, topTech, strlen(TechMenu[j].tech)) == 0){
+				//find the correct libcell
+				for(int k = 0; k < TechMenu[j].libcell_count; k++){
+					if(strncmp(current_libCellName,TechMenu[j].libcell[k].libCellName, strlen(TechMenu[j].libcell[k].libCellName))==0){
+						ArrayInfo->TopCellArray[i].libCellSizeX = TechMenu[j].libcell[k].libCellSizeX;
+						ArrayInfo->TopCellArray[i].libCellSizeY = TechMenu[j].libcell[k].libCellSizeY;
+					}
+				}
+			}
+		}
+	}
+}
+
+
+void printTopBottomCellArray(TopBottomCellArray *ArrayInfo, vector <int> PartitionResult){
+	printf("PartiionResult: \n");
+	for(int i=0; i< (int)PartitionResult.size(); i++){
+		printf("%d  ",PartitionResult[i]);
+	}
+	printf("\n");
+	printf("PartitionIndexResult: \n");
+	for(int i=0; i< (int)ArrayInfo->PartitionIndexResult.size(); i++){
+		printf("%d  ",ArrayInfo->PartitionIndexResult[i]);
+	}
+	printf("\n");
+
 	printf("BottomCell Number: %d\n", ArrayInfo->BottomCellNumber);
 	for(int i = 0; i < ArrayInfo->BottomCellNumber; i++){
 		printf("\tCell ID: %d\n", ArrayInfo->BottomCellArray[i].cellID);
@@ -164,6 +256,7 @@ void printTopBottomCellArray(TopBottomCellArray *ArrayInfo){
 		for(int j = 0; j < ArrayInfo->BottomCellArray[i].netsNumber; j++){
 			printf("%d ", ArrayInfo->BottomCellArray[i].nets[j]);
 		}
+		printf("\t\t(libCellSizeX, libCellSizeY) = (%d, %d)\n", ArrayInfo->BottomCellArray[i].libCellSizeX, ArrayInfo->BottomCellArray[i].libCellSizeY);
 		printf("\n");
 	}
 
@@ -175,6 +268,7 @@ void printTopBottomCellArray(TopBottomCellArray *ArrayInfo){
 		for(int j = 0; j < ArrayInfo->TopCellArray[i].netsNumber; j++){
 			printf("%d ", ArrayInfo->TopCellArray[i].nets[j]);
 		}
+		printf("\t\t(libCellSizeX, libCellSizeY) = (%d, %d)\n", ArrayInfo->TopCellArray[i].libCellSizeX, ArrayInfo->TopCellArray[i].libCellSizeY);
 		printf("\n");
 	}
 }
