@@ -4,7 +4,7 @@ BINS = main
 SRC_DIRS := src/lib
 
 CHECKCC = valgrind
-CHECKFLAGS = --leak-check=full -s --show-leak-kinds=all
+CHECKFLAGS = --leak-check=full -s --show-leak-kinds=all --track-origins=yes 
 
 SRCS := $(wildcard $(SRC_DIRS:=/*.cpp))
 OBJS := $(SRCS:.cpp=.o)
