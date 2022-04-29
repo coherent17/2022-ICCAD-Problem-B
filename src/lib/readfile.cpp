@@ -137,7 +137,7 @@ void printInstanceInfo(int NumInstances, vector <Instance> InstanceArray){
     printf("\n");
 }
 
-void readNetInfo(FILE *input, int *NumNets, vector <RawNet> &NetArray){
+void readNetInfo(FILE *input, int *NumNets, vector <RawNet> &rawnet){
     assert(input);
 
     fscanf(input, "%*s %d", &(*NumNets));
@@ -158,17 +158,17 @@ void readNetInfo(FILE *input, int *NumNets, vector <RawNet> &NetArray){
             strcpy(temp_connection[j].libPinName, token);
         }
         temp.Connection = temp_connection;
-        NetArray.emplace_back(temp);
+        rawnet.emplace_back(temp);
     }
     fclose(input);
 }
 
-void printNetInfo(int NumNets, vector <RawNet> NetArray){
+void printNetInfo(int NumNets, vector <RawNet> rawnet){
     printf("\nNumNets <netCount>: %d\n", NumNets);
     for(int i = 0; i < NumNets; i++){
-        printf("\tNet <netName> <numPins>: %s %d\n", NetArray[i].netName, NetArray[i].numPins);
-        for(int j = 0; j < NetArray[i].numPins; j++){
-            printf("\t\tPin <instName>/<libPinName>: %s / %s\n", NetArray[i].Connection[j].instName, NetArray[i].Connection[j].libPinName);
+        printf("\tNet <netName> <numPins>: %s %d\n", rawnet[i].netName, rawnet[i].numPins);
+        for(int j = 0; j < rawnet[i].numPins; j++){
+            printf("\t\tPin <instName>/<libPinName>: %s / %s\n", rawnet[i].Connection[j].instName, rawnet[i].Connection[j].libPinName);
         }
         printf("\n");
     }
