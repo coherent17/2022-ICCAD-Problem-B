@@ -30,6 +30,7 @@ void fillSegment(vector <vector <int>> &PlacementState, int row, int left_pointe
 //if flag = 0, place the bottom die, if flag = 1, place the top die
 void InitializePlacement(Die *currentDie, TopBottomCellArray ArrayInfo, int flag, bool *PartitionAgain){
     *PartitionAgain = true;
+    int usingCell = 0;
     vector <vector <int>> PlacementState(currentDie->repeatCount,vector <int>(currentDie->rowLength,EMPTY_STATE));
     int sucessful_placement_count = 0;
     if(flag == 0){
@@ -42,6 +43,7 @@ void InitializePlacement(Die *currentDie, TopBottomCellArray ArrayInfo, int flag
                 if( isValidPlacement(PlacementState, row, left_edge, right_edge)){
                     fillSegment(PlacementState, row, left_edge, right_edge, ArrayInfo.BottomCellArray[i].cellID);
                     sucessful_placement_count++;
+                    usingCell += right_edge - left_edge + 1;
                     break;
                 }
                 else{
@@ -58,11 +60,11 @@ void InitializePlacement(Die *currentDie, TopBottomCellArray ArrayInfo, int flag
                 }
             }
         }
-        if(sucessful_placement_count == ArrayInfo.BottomCellNumber) {
-            *PartitionAgain = false;
-        }
+        if(sucessful_placement_count == ArrayInfo.BottomCellNumber) *PartitionAgain = false;
         printf("successful placement count : %d \n",sucessful_placement_count);
-    
+
+        printf("MaxUtil of bottom die: %d Current Partition Util: %d\n\n", currentDie->MaxUtil, usingCell * 100/currentDie->rowLength /currentDie->repeatCount);
+        if(usingCell * 100/currentDie->rowLength /currentDie->repeatCount > currentDie->MaxUtil) *PartitionAgain = true;
     }
     else if(flag == 1){
         for( int i=0; i<ArrayInfo.TopCellNumber; i++){
@@ -74,6 +76,7 @@ void InitializePlacement(Die *currentDie, TopBottomCellArray ArrayInfo, int flag
                 if( isValidPlacement(PlacementState, row, left_edge, right_edge)){
                     fillSegment(PlacementState, row, left_edge, right_edge, ArrayInfo.TopCellArray[i].cellID);
                     sucessful_placement_count++;
+                    usingCell += right_edge - left_edge + 1;
                     break;
                 }
                 else{
@@ -92,6 +95,9 @@ void InitializePlacement(Die *currentDie, TopBottomCellArray ArrayInfo, int flag
         }
         if(sucessful_placement_count == ArrayInfo.TopCellNumber) *PartitionAgain = false;
         printf("successful placement count : %d \n",sucessful_placement_count);
+
+        printf("MaxUtil of top die: %d Current Partition Util: %d\n\n", currentDie->MaxUtil, usingCell * 100/currentDie->rowLength /currentDie->repeatCount);
+        if(usingCell * 100/currentDie->rowLength /currentDie->repeatCount > currentDie->MaxUtil) *PartitionAgain = true;
     }
     else{
         assert(flag!=0 || flag!=1);
