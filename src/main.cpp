@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <vector>
+#include <stdlib.h>
 #include "../src/lib/readfile.h"
 #include "../src/lib/partition.h"
 #include "../src/lib/placement.h"
@@ -59,11 +60,52 @@ int main(int argc, char *argv[]){
 
 
 	//initial placement
-	bool PartitionAgain;
-	InitializePlacement(&bottom_die, ArrayInfo, 0, &PartitionAgain);
-	printPlacementState(bottom_die, PartitionAgain);
-	InitializePlacement(&top_die, ArrayInfo, 1, &PartitionAgain);
-	printPlacementState(top_die, PartitionAgain);
+	bool BottomPartitionAgain;
+	bool TopPartitionAgain;
+	InitializePlacement(&bottom_die, ArrayInfo, 0, &BottomPartitionAgain);
+	printPlacementState(bottom_die, BottomPartitionAgain);
+	InitializePlacement(&top_die, ArrayInfo, 1, &TopPartitionAgain);
+	printPlacementState(top_die, TopPartitionAgain);
 
+
+	//repartition if the current can't have a legal placement
+	int repartitionCount = 0;
+	while(BottomPartitionAgain == true || TopPartitionAgain == true){
+		repartitionCount++;
+
+		//clear the partition result
+		PartitionResult.clear();
+		for(int i = 0; i < ArrayInfo.BottomCellNumber; i++){
+			ArrayInfo.BottomCellArray[i].nets.clear();
+		}
+		for(int i = 0 ; i < ArrayInfo.TopCellNumber; i++){
+			ArrayInfo.TopCellArray[i].nets.clear();
+		}
+		ArrayInfo.PartitionIndexResult.clear();
+		ArrayInfo.BottomCellArray.clear();
+		ArrayInfo.TopCellArray.clear();
+
+
+		//partition part
+		OutputPartitionFormat(NumNets, NumInstances, rawnet);					//convert the rawnet into the file that can feed to shmetis to do partition
+		PartitionInstance();													//using shmetis to perform two way partition
+		ReadCutSize(&NumTerminal);									            //read cut size
+		ReadPartitionResult(&ArrayInfo, NumInstances, PartitionResult);			//store the partition result into cellarray in a
+		UpdateInstanceArray(InstanceArray, PartitionResult, top_die, bottom_die);
+		printPartitionResult(ArrayInfo, InstanceArray, PartitionResult);
+
+
+		//create netarray and cellarray
+		PrintNetArray(NetArray, NumNets);
+		GetNetOfCell(NetArray, &ArrayInfo, PartitionResult);
+		getSizeOfCellArray(&ArrayInfo, TechMenu, top_die, bottom_die, InstanceArray);
+		printTopBottomCellArray(&ArrayInfo, PartitionResult);
+
+		InitializePlacement(&bottom_die, ArrayInfo, 0, &BottomPartitionAgain);
+		printPlacementState(bottom_die, BottomPartitionAgain);
+		InitializePlacement(&top_die, ArrayInfo, 1, &TopPartitionAgain);
+		printPlacementState(top_die, TopPartitionAgain);
+	}
+	printf("repartition %d times\n", repartitionCount);
 	return 0;
 }

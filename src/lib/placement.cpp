@@ -109,7 +109,10 @@ void printPlacementState(Die current_die, bool PartitionAgain){
         }
         printf("\n");
     }
-    else{
+    else if(PartitionAgain == 1){
         printf("go eat garbage!!!!!!!!!!!!!!!!!!!!!!!!\n");
+    }
+    else{
+        assert(PartitionAgain != 0 || PartitionAgain != 1);
     }
 }
