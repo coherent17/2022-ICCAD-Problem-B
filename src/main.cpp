@@ -87,10 +87,10 @@ int main(int argc, char *argv[]){
 
 
 		//partition part
-		OutputPartitionFormat(NumNets, NumInstances, rawnet);					//convert the rawnet into the file that can feed to shmetis to do partition
-		PartitionInstance();													//using shmetis to perform two way partition
-		ReadCutSize(&NumTerminal);									            //read cut size
-		ReadPartitionResult(&ArrayInfo, NumInstances, PartitionResult);			//store the partition result into cellarray in a
+		OutputPartitionFormat(NumNets, NumInstances, rawnet);
+		PartitionInstance();
+		ReadCutSize(&NumTerminal);
+		ReadPartitionResult(&ArrayInfo, NumInstances, PartitionResult);
 		UpdateInstanceArray(InstanceArray, PartitionResult, top_die, bottom_die);
 		printPartitionResult(ArrayInfo, InstanceArray, PartitionResult);
 
