@@ -62,9 +62,9 @@ int main(int argc, char *argv[]){
 	//initial placement
 	bool BottomPartitionAgain;
 	bool TopPartitionAgain;
-	InitializePlacement(&bottom_die, ArrayInfo, 0, &BottomPartitionAgain);
+	InitializePlacement(&bottom_die, &ArrayInfo, 0, &BottomPartitionAgain);
 	printPlacementState(bottom_die, BottomPartitionAgain);
-	InitializePlacement(&top_die, ArrayInfo, 1, &TopPartitionAgain);
+	InitializePlacement(&top_die, &ArrayInfo, 1, &TopPartitionAgain);
 	printPlacementState(top_die, TopPartitionAgain);
 
 
@@ -101,11 +101,12 @@ int main(int argc, char *argv[]){
 		getSizeOfCellArray(&ArrayInfo, TechMenu, top_die, bottom_die, InstanceArray);
 		printTopBottomCellArray(&ArrayInfo, PartitionResult);
 
-		InitializePlacement(&bottom_die, ArrayInfo, 0, &BottomPartitionAgain);
+		InitializePlacement(&bottom_die, &ArrayInfo, 0, &BottomPartitionAgain);
 		printPlacementState(bottom_die, BottomPartitionAgain);
-		InitializePlacement(&top_die, ArrayInfo, 1, &TopPartitionAgain);
+		InitializePlacement(&top_die, &ArrayInfo, 1, &TopPartitionAgain);
 		printPlacementState(top_die, TopPartitionAgain);
 	}
 	printf("repartition %d times\n", repartitionCount);
+	OutputCellLocateState(ArrayInfo, top_die, bottom_die);
 	return 0;
 }
