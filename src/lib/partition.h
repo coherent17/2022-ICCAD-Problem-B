@@ -21,6 +21,9 @@ typedef struct cellStruct{
 	int cellID;						//the cellid number must meet the index of instancearray
     int libCellSizeX;				
     int libCellSizeY;
+    int rowID;
+    int left_edge;
+    int right_edge;
 } Cell;
 
 typedef struct _TopBottomCellArray{
