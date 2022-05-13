@@ -86,6 +86,8 @@ def readFile():
 
    ax[0].grid(True, alpha = 0.3)
    ax[1].grid(True, alpha = 0.3)
+   ax[0].set_title("Bottom Die Placement", fontsize = 24)
+   ax[1].set_title("Top Die Placement", fontsize = 24)
 
    plt.savefig('test.svg')
 
