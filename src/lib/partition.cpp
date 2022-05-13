@@ -26,7 +26,11 @@ void OutputPartitionFormat(int NumNets, int NumInstances, vector <RawNet> NetArr
 //using shmetis to do 2-way partition and redirect the output stream to log.txt
 void PartitionInstance(){
 	system("chmod +x src/hmetis/shmetis");
-	system("./src/hmetis/shmetis Netlist.hgr 2 4 > log.txt");
+	system("./src/hmetis/shmetis Netlist.hgr 2 5 > log.txt");
+
+	//what if the partition result still can't have a valid placement?
+	//change unblanced factor?
+	//random the vertex weight?
 }
 
 //read cut size 
