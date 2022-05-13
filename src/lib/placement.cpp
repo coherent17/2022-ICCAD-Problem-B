@@ -145,6 +145,7 @@ void OutputCellLocateState(TopBottomCellArray ArrayInfo, Die top_die, Die bottom
     }
 
     vector <vector <point>> pinLocationPairs;
+    vector <bbox> bboxes;
 
     //output the pin location
     for(int i = 0; i < (int)rawnet.size(); i++){
@@ -238,10 +239,14 @@ void OutputCellLocateState(TopBottomCellArray ArrayInfo, Die top_die, Die bottom
                     }
                 }
             }
-
-
         }
         pinLocationPairs.emplace_back(pinLocationPair);
+        bbox temp_bbox;
+        temp_bbox.x_min = x_min;
+        temp_bbox.x_max = x_max;
+        temp_bbox.y_min = y_min;
+        temp_bbox.y_max = y_max;
+        bboxes.emplace_back(temp_bbox); 
     }
 
     //start to output the point that connect in same nets
@@ -251,6 +256,10 @@ void OutputCellLocateState(TopBottomCellArray ArrayInfo, Die top_die, Die bottom
         for(int j = 0 ; j < (int)pinLocationPairs[i].size(); j++){
             fprintf(placementDraw, "%d %d %d\n", pinLocationPairs[i][j].x_cor, pinLocationPairs[i][j].y_cor, pinLocationPairs[i][j].comeFrom);
         }
+    }
+
+    for(int i = 0; i < (int)bboxes.size(); i++){
+        fprintf(placementDraw, "%d %d %d %d\n", bboxes[i].x_min, bboxes[i].x_max, bboxes[i].y_min, bboxes[i].y_max);
     }
 
     fclose(placementDraw);

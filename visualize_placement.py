@@ -3,13 +3,14 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import random
 
-def plot_rectangle(ax, x1, y1, x2, y2):
+def plot_rectangle(ax, x1, y1, x2, y2, c):
    ax.add_patch(
       patches.Rectangle(
          (x1,y1),
          (x2-x1),
          (y2-y1),
          fill = False,
+         color = c,
       )
    )
 
@@ -31,7 +32,7 @@ def readFile():
       rowID = int(rowID)
       left_edge = int(left_edge)
       right_edge = int(right_edge)
-      plot_rectangle(ax[0], left_edge, rowID * bottom_die_rowHeight, right_edge + 1, (rowID + 1) * bottom_die_rowHeight)
+      plot_rectangle(ax[0], left_edge, rowID * bottom_die_rowHeight, right_edge + 1, (rowID + 1) * bottom_die_rowHeight,'k')
       ax[0].text((left_edge + right_edge) / 2, (rowID + 0.5) * bottom_die_rowHeight, "C" + str(cellID + 1), fontsize = 20, color ="black") 
 
 
@@ -49,7 +50,7 @@ def readFile():
       rowID = int(rowID)
       left_edge = int(left_edge)
       right_edge = int(right_edge)
-      plot_rectangle(ax[1], left_edge, rowID * top_die_rowHeight, right_edge + 1, (rowID + 1) * top_die_rowHeight)
+      plot_rectangle(ax[1], left_edge, rowID * top_die_rowHeight, right_edge + 1, (rowID + 1) * top_die_rowHeight, 'k')
       ax[1].text((left_edge + right_edge) / 2, (rowID + 0.5) * top_die_rowHeight, "C" + str(cellID + 1), fontsize = 20, color ="black") 
 
 
@@ -69,8 +70,22 @@ def readFile():
          y_cor = int(y_cor)
          comeFrom = int(comeFrom)
          ax[comeFrom].plot(x_cor, y_cor, color = color[i], Marker = '*', MarkerSize = 10)
+         ax[(comeFrom+1 )% 2].plot(x_cor, y_cor, color = color[i], Marker = '*', MarkerSize = 10, alpha = 0.1)
 
 
+   #plot the bbox
+   for i in range(0, numNets):
+      x_min, x_max, y_min, y_max = file.readline().split()
+      x_min = int(x_min)
+      x_max = int(x_max)
+      y_min = int(y_min)
+      y_max = int(y_max)
+      plot_rectangle(ax[0], x_min, y_min, x_max, y_max, color[i])
+      plot_rectangle(ax[1], x_min, y_min, x_max, y_max, color[i])
+
+
+   ax[0].grid(True, alpha = 0.3)
+   ax[1].grid(True, alpha = 0.3)
 
    plt.savefig('test.svg')
 
