@@ -107,6 +107,6 @@ int main(int argc, char *argv[]){
 		printPlacementState(top_die, TopPartitionAgain);
 	}
 	printf("repartition %d times\n", repartitionCount);
-	OutputCellLocateState(ArrayInfo, top_die, bottom_die);
+	OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
 	return 0;
 }
