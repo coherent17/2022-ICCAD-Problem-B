@@ -7,15 +7,15 @@
 
 #define TEMP_BUFFER_SIZE 10
 #define WORD_BUFFER_SIZE 1000
-void OutputPartitionFormat(int NumNets, int NumInstances, vector <RawNet> NetArray){
+void OutputPartitionFormat(int NumNets, int NumInstances, vector <RawNet> rawnet){
 	FILE *shmetisInput = fopen("Netlist.hgr", "w");
 	fprintf(shmetisInput, "%d %d\n", NumNets, NumInstances);
 
 	for(int i = 0; i < NumNets; i++){
-		for(int j = 0; j < NetArray[i].numPins; j++){
+		for(int j = 0; j < rawnet[i].numPins; j++){
 			char buffer[TEMP_BUFFER_SIZE];
 			memset(buffer, '\0', sizeof(buffer));
-			strncpy(buffer,  &(NetArray[i].Connection[j].instName[1]), strlen(NetArray[i].Connection[j].instName)-1);
+			strncpy(buffer,  &(rawnet[i].Connection[j].instName[1]), strlen(rawnet[i].Connection[j].instName)-1);
 			fprintf(shmetisInput, "%s ", buffer);
 		}
 		fprintf(shmetisInput, "\n");
