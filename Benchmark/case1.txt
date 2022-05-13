@@ -31,7 +31,7 @@ BottomDieRows 0 0 30 15 2
 TopDieTech TA
 BottomDieTech TB
 
-TerminalSize 5 5
+TerminalSize 6 6
 TerminalSpacing 5
 
 NumInstances 8
