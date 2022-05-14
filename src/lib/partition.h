@@ -10,7 +10,6 @@ using std::vector;
 typedef struct netStruct{
 	int CellNumber;      			//cell number included
 	vector <int> cells;  			//list of cell included in this nell
-	int HPWL;						//HPWL
 	int NetID;            			
 } Net;
 
