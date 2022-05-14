@@ -5,6 +5,7 @@
 #include "../src/lib/readfile.h"
 #include "../src/lib/partition.h"
 #include "../src/lib/placement.h"
+#include "../src/lib/simulate_annealing.h"
 
 using namespace std;
 using std::vector;
@@ -108,5 +109,7 @@ int main(int argc, char *argv[]){
 	}
 	printf("repartition %d times\n", repartitionCount);
 	OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
+	int HPWL = Cost(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
+	printf("%d\n", HPWL);
 	return 0;
 }
