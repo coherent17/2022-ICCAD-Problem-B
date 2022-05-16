@@ -5,6 +5,7 @@
 #include "../src/lib/readfile.h"
 #include "../src/lib/partition.h"
 #include "../src/lib/placement.h"
+#include "../src/lib/random.h"
 #include "../src/lib/simulate_annealing.h"
 
 using namespace std;
@@ -109,7 +110,22 @@ int main(int argc, char *argv[]){
 	}
 	printf("repartition %d times\n", repartitionCount);
 	OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
-	int HPWL = Cost(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
+
+
+
+	//Construct Simulate Annealing Content Struct:
+	SA_CONTENT SA_contentPtr;
+	SA_contentPtr.top_die = top_die;
+	SA_contentPtr.bottom_die = bottom_die;
+	SA_contentPtr.TechMenu = TechMenu;
+	SA_contentPtr.rawnet = rawnet;
+	SA_contentPtr.PartitionResult = PartitionResult;
+	SA_contentPtr.InstanceArray = InstanceArray;
+	SA_contentPtr.ArrayInfo = ArrayInfo;
+
+	int HPWL = Cost(SA_contentPtr);
 	printf("%d\n", HPWL);
+
+	SimulateAnnealing(&SA_contentPtr);
 	return 0;
 }
