@@ -109,7 +109,7 @@ int main(int argc, char *argv[]){
 		printPlacementState(top_die, TopPartitionAgain);
 	}
 	printf("repartition %d times\n", repartitionCount);
-	OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
+	//OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
 
 
 
@@ -123,9 +123,10 @@ int main(int argc, char *argv[]){
 	SA_contentPtr.InstanceArray = InstanceArray;
 	SA_contentPtr.ArrayInfo = ArrayInfo;
 
-	int HPWL = Cost(SA_contentPtr);
-	printf("%d\n", HPWL);
-
-	SimulateAnnealing(&SA_contentPtr);
+	SA_contentPtr = SimulateAnnealing(SA_contentPtr);
+	top_die = SA_contentPtr.top_die;
+	bottom_die = SA_contentPtr.bottom_die;
+	ArrayInfo = SA_contentPtr.ArrayInfo;
+	OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
 	return 0;
 }

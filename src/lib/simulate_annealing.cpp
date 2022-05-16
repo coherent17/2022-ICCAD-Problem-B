@@ -112,8 +112,6 @@ SA_CONTENT Move1(SA_CONTENT SA_contentPtr, int *moveFlag){
 	vector <int> PartitionIndexResult = ArrayInfo.PartitionIndexResult;
 
 	int random_instance = getIntRandom(0, ArrayInfo.TopCellNumber + ArrayInfo.BottomCellNumber-1);						//choose a instance to move
-	//random_instance = 0;
-	printf("random_instance = %d\n", random_instance);
 	int random_instance_partition_result = PartitionResult[random_instance];											//check where is the partition of this instance
 	int index = PartitionIndexResult[random_instance];																	//check the instance data is store in which index
 
@@ -139,8 +137,6 @@ SA_CONTENT Move1(SA_CONTENT SA_contentPtr, int *moveFlag){
 		currentDie = top_die;
 	}
 
-	printPlacementState(currentDie, 0);
-
 	//remove the segment in placement state
     for(int i=left_edge; i<=right_edge; i++){
         currentDie.PlacementState[rowID][i] = EMPTY_STATE;
@@ -148,8 +144,6 @@ SA_CONTENT Move1(SA_CONTENT SA_contentPtr, int *moveFlag){
 
     //find some place to place the instance in random row
 	int random_rowID = getIntRandom(0, currentDie.repeatCount-1);
-	//random_rowID = 1;
-	printf("random_rowID = %d\n", random_rowID);
 	vector <point> ValidPlacementList;
 
 	int length = right_edge - left_edge;
@@ -166,14 +160,8 @@ SA_CONTENT Move1(SA_CONTENT SA_contentPtr, int *moveFlag){
 		left_edge++;
 		right_edge++;
 	}
+
 	SA_CONTENT new_SA_contentPtr;
-	new_SA_contentPtr.top_die = top_die;
-	new_SA_contentPtr.bottom_die = bottom_die;
-	new_SA_contentPtr.TechMenu = TechMenu;
-	new_SA_contentPtr.rawnet = rawnet;
-	new_SA_contentPtr.PartitionResult = PartitionResult;
-	new_SA_contentPtr.InstanceArray = InstanceArray;
-	new_SA_contentPtr.ArrayInfo = ArrayInfo;
 
 	//choose a random placement in the ValidPlacementList
 	if((int)ValidPlacementList.size() == 0){
@@ -181,6 +169,9 @@ SA_CONTENT Move1(SA_CONTENT SA_contentPtr, int *moveFlag){
 		return new_SA_contentPtr;
 	}
 	else{
+		printf("\n**********************************************************************************************\n");
+		printf("choose random instance = %d, and random rowID = %d\n", random_instance, random_rowID);
+		printPlacementState(currentDie,0);
 		int random_vector_index = getIntRandom(0, (int)ValidPlacementList.size()-1);
 		left_edge = ValidPlacementList[random_vector_index].x_cor;
 		right_edge = ValidPlacementList[random_vector_index].y_cor;
@@ -190,7 +181,27 @@ SA_CONTENT Move1(SA_CONTENT SA_contentPtr, int *moveFlag){
 		for(int i = left_edge; i <= right_edge; i++){
 			currentDie.PlacementState[random_rowID][i] = random_instance;
 		}
+
+		//update the cellarray
+		if(random_instance_partition_result == 0){
+			ArrayInfo.BottomCellArray[index].left_edge = left_edge;
+			ArrayInfo.BottomCellArray[index].right_edge = right_edge;
+		}
+		else if(random_instance_partition_result == 1){
+			ArrayInfo.TopCellArray[index].left_edge = left_edge;
+			ArrayInfo.TopCellArray[index].right_edge = right_edge;			
+		}
+
+		new_SA_contentPtr.top_die = top_die;
+		new_SA_contentPtr.bottom_die = bottom_die;
+		new_SA_contentPtr.TechMenu = TechMenu;
+		new_SA_contentPtr.rawnet = rawnet;
+		new_SA_contentPtr.PartitionResult = PartitionResult;
+		new_SA_contentPtr.InstanceArray = InstanceArray;
+		new_SA_contentPtr.ArrayInfo = ArrayInfo;
+
 		printPlacementState(currentDie, 0);
+		printf("**********************************************************************************************\n");
 		return new_SA_contentPtr; 
 	}
 }
@@ -209,16 +220,28 @@ bool accept(int new_cost, int old_cost, double Temperature){
 	else return 0;
 }
 
-void SimulateAnnealing(SA_CONTENT *SA_contentPtr){
+SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
 	double Temperature = ANNEALING_TEMPERATURE;
 
 	while(Temperature > TERMINATE_TEMPERATURE){
 		for(int i = 0; i < INNER_LOOP_TIMES; i++){
 			int moveFlag;
 			SA_CONTENT new_SA_contentPtr;
-			new_SA_contentPtr = Move1(*SA_contentPtr, &moveFlag);
-			*SA_contentPtr = new_SA_contentPtr;
+			new_SA_contentPtr = Move1(SA_contentPtr, &moveFlag);
+
+			if(moveFlag != -1){
+				int old_cost = Cost(SA_contentPtr);
+				int new_cost = Cost(new_SA_contentPtr);
+				printf("old_cost = %d, new_cost = %d\n",old_cost, new_cost);
+
+				if(accept(new_cost, old_cost, Temperature)){
+					printf("Accepted!\n");
+					printPlacementState(new_SA_contentPtr.top_die,0);
+					SA_contentPtr = new_SA_contentPtr;
+				}
+			}
 		}
 		Temperature = Temperature * alpha;
 	}
+	return SA_contentPtr;
 }
