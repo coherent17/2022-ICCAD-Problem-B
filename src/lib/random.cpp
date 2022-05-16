@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "random.h"
 
 int getIntRandom(int lower, int upper){
