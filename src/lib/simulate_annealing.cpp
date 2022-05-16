@@ -181,7 +181,7 @@ SA_CONTENT Move1(SA_CONTENT SA_contentPtr, int *moveFlag){
 		return new_SA_contentPtr;
 	}
 	else{
-		int random_vector_index = getIntRandom(0, (int)ValidPlacementList.size());
+		int random_vector_index = getIntRandom(0, (int)ValidPlacementList.size()-1);
 		left_edge = ValidPlacementList[random_vector_index].x_cor;
 		right_edge = ValidPlacementList[random_vector_index].y_cor;
 		
