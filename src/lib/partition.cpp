@@ -211,6 +211,7 @@ void getSizeOfCellArray(TopBottomCellArray *ArrayInfo, vector <Tech_menu> TechMe
 					if(strncmp(current_libCellName,TechMenu[j].libcell[k].libCellName, strlen(TechMenu[j].libcell[k].libCellName)) == 0){
 						ArrayInfo->BottomCellArray[i].libCellSizeX = TechMenu[j].libcell[k].libCellSizeX;
 						ArrayInfo->BottomCellArray[i].libCellSizeY = TechMenu[j].libcell[k].libCellSizeY;
+						break;
 					}
 				}
 			}
@@ -229,9 +230,11 @@ void getSizeOfCellArray(TopBottomCellArray *ArrayInfo, vector <Tech_menu> TechMe
 			if(strncmp(TechMenu[j].tech, topTech, strlen(TechMenu[j].tech)) == 0){
 				//find the correct libcell
 				for(int k = 0; k < TechMenu[j].libcell_count; k++){
+					printf("k = %d, %s %s\n", k, current_libCellName, TechMenu[j].libcell[k].libCellName);
 					if(strncmp(current_libCellName,TechMenu[j].libcell[k].libCellName, strlen(TechMenu[j].libcell[k].libCellName))==0){
 						ArrayInfo->TopCellArray[i].libCellSizeX = TechMenu[j].libcell[k].libCellSizeX;
 						ArrayInfo->TopCellArray[i].libCellSizeY = TechMenu[j].libcell[k].libCellSizeY;
+						break;
 					}
 				}
 			}
