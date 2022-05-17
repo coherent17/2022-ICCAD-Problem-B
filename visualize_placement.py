@@ -23,6 +23,7 @@ def readFile():
    bottom_rowLength = int(bottom_rowLength)
    bottom_die_rowHeight = int(bottom_die_rowHeight);
    ax[0].plot(bottom_rowLength, bottom_repeatCount * bottom_die_rowHeight, 'g.')
+   ax[0].plot(0, 0, 'g.')
 
    BottomCellNumber = file.readline()
    BottomCellNumber = int(BottomCellNumber)
@@ -41,6 +42,7 @@ def readFile():
    top_rowLength = int(top_rowLength)
    top_die_rowHeight = int(top_die_rowHeight)
    ax[1].plot(top_rowLength, top_repeatCount * top_die_rowHeight, 'g.')
+   ax[1].plot(0, 0, 'g.')
 
    TopCellNumber = file.readline()
    TopCellNumber = int(TopCellNumber)
