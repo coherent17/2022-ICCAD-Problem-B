@@ -182,14 +182,27 @@ SA_CONTENT Move1(SA_CONTENT SA_contentPtr, int *moveFlag){
 			currentDie.PlacementState[random_rowID][i] = random_instance;
 		}
 
-		//update the cellarray
 		if(random_instance_partition_result == 0){
+			bottom_die.PlacementState = currentDie.PlacementState;
+		}
+		else{
+			top_die.PlacementState = currentDie.PlacementState;
+		}
+
+		//update the cellarray and rowID
+		if(random_instance_partition_result == 0){
+			printf("left edge = %d, right_edge = %d\n", left_edge, right_edge);
 			ArrayInfo.BottomCellArray[index].left_edge = left_edge;
 			ArrayInfo.BottomCellArray[index].right_edge = right_edge;
+			ArrayInfo.BottomCellArray[index].rowID = random_rowID;
+			printf("new left edge = %d, new right edge = %d\n", ArrayInfo.BottomCellArray[index].left_edge, ArrayInfo.BottomCellArray[index].right_edge);
 		}
 		else if(random_instance_partition_result == 1){
+			printf("left edge = %d, right_edge = %d\n", left_edge, right_edge);
 			ArrayInfo.TopCellArray[index].left_edge = left_edge;
-			ArrayInfo.TopCellArray[index].right_edge = right_edge;			
+			ArrayInfo.TopCellArray[index].right_edge = right_edge;
+			ArrayInfo.TopCellArray[index].rowID = random_rowID;	
+			printf("new left edge = %d, new right edge = %d\n", ArrayInfo.TopCellArray[index].left_edge, ArrayInfo.TopCellArray[index].right_edge);		
 		}
 
 		new_SA_contentPtr.top_die = top_die;
@@ -199,6 +212,8 @@ SA_CONTENT Move1(SA_CONTENT SA_contentPtr, int *moveFlag){
 		new_SA_contentPtr.PartitionResult = PartitionResult;
 		new_SA_contentPtr.InstanceArray = InstanceArray;
 		new_SA_contentPtr.ArrayInfo = ArrayInfo;
+		new_SA_contentPtr.ArrayInfo.TopCellArray = ArrayInfo.TopCellArray;
+		new_SA_contentPtr.ArrayInfo.BottomCellArray = ArrayInfo.BottomCellArray;
 
 		printPlacementState(currentDie, 0);
 		printf("**********************************************************************************************\n");
@@ -222,12 +237,14 @@ bool accept(int new_cost, int old_cost, double Temperature){
 
 SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
 	double Temperature = ANNEALING_TEMPERATURE;
+	SA_CONTENT new_SA_contentPtr;
 
 	while(Temperature > TERMINATE_TEMPERATURE){
 		for(int i = 0; i < INNER_LOOP_TIMES; i++){
 			int moveFlag;
-			SA_CONTENT new_SA_contentPtr;
 			new_SA_contentPtr = Move1(SA_contentPtr, &moveFlag);
+			printPlacementState(new_SA_contentPtr.top_die,0);
+			printPlacementState(new_SA_contentPtr.bottom_die,0);
 
 			if(moveFlag != -1){
 				int old_cost = Cost(SA_contentPtr);
@@ -236,8 +253,22 @@ SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
 
 				if(accept(new_cost, old_cost, Temperature)){
 					printf("Accepted!\n");
-					printPlacementState(new_SA_contentPtr.top_die,0);
-					SA_contentPtr = new_SA_contentPtr;
+
+					if(moveFlag == 0){
+						SA_contentPtr.bottom_die = new_SA_contentPtr.bottom_die;
+						SA_contentPtr.ArrayInfo = new_SA_contentPtr.ArrayInfo;
+						printPlacementState(SA_contentPtr.bottom_die,0);
+						//printArrayInfo(&SA_contentPtr.ArrayInfo);
+						printf("End\n\n");
+					}
+					else if(moveFlag == 1){
+						SA_contentPtr.top_die = new_SA_contentPtr.top_die;
+						SA_contentPtr.ArrayInfo = new_SA_contentPtr.ArrayInfo;
+						printPlacementState(SA_contentPtr.top_die,0);
+						//printArrayInfo(&SA_contentPtr.ArrayInfo);
+						printf("End\n\n");
+					}
+					
 				}
 			}
 		}
