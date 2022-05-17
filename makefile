@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -g -Wall -ggdb3
+CFLAGS = -g -Wall -O3
 BINS = main
 SRC_DIRS := src/lib
 OUT = test.svg placement.txt cost.out cost.svg
@@ -19,9 +19,14 @@ $(BINS): src/main.cpp $(OBJS)
 	$(CC) $(CFLAGS)  $^ -o $@
 
 do:
+	./main Benchmark/case2.txt
+	python3 visualize_placement.py
+	#python3 visualize_cost.py
+
+debug:
 	$(CHECKCC) $(CHECKFLAGS) ./main Benchmark/case2.txt
 	python3 visualize_placement.py
-	python3 visualize_cost.py
+	#python3 visualize_cost.py
 
 clean:
 	rm -rf src/lib/*.o main $(OUT)
