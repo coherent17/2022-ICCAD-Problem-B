@@ -6,10 +6,10 @@
 #ifndef _SIMULATE_ANNEALING_H_
 #define _SIMULATE_ANNEALING_H_
 
-#define ANNEALING_TEMPERATURE 	1000
+#define ANNEALING_TEMPERATURE 	100000
 #define TERMINATE_TEMPERATURE 	0.1
-#define INNER_LOOP_TIMES 		100
-#define alpha 					0.8
+#define INNER_LOOP_TIMES 		1000
+#define alpha 					0.85
 
 typedef struct _SA_CONTENT_{
 	Die top_die;
