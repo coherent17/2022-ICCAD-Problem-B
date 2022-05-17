@@ -264,3 +264,25 @@ void OutputCellLocateState(TopBottomCellArray ArrayInfo, Die top_die, Die bottom
 
     fclose(placementDraw);
 }
+
+
+void printArrayInfo(TopBottomCellArray *ArrayInfo){
+
+    printf("BottomCell Number: %d\n", ArrayInfo->BottomCellNumber);
+    for(int i = 0; i < ArrayInfo->BottomCellNumber; i++){
+        printf("\tCell ID: %d\n", ArrayInfo->BottomCellArray[i].cellID);
+        printf("\t\tBelongs to %d Die\n", ArrayInfo->BottomCellArray[i].WhichDie);
+        printf("\t\tRowID = %d, left_edge = %d, right_edge = %d\n", ArrayInfo->BottomCellArray[i].rowID, ArrayInfo->BottomCellArray[i].left_edge, ArrayInfo->BottomCellArray[i].right_edge);
+        printf("\t\t(libCellSizeX, libCellSizeY) = (%d, %d)\n", ArrayInfo->BottomCellArray[i].libCellSizeX, ArrayInfo->BottomCellArray[i].libCellSizeY);
+        printf("\n");
+    }
+
+    printf("TopCell Number: %d\n", ArrayInfo->TopCellNumber);
+    for(int i = 0; i < ArrayInfo->TopCellNumber; i++){
+        printf("\tCell ID: %d\n", ArrayInfo->TopCellArray[i].cellID);
+        printf("\t\tBelongs to %d Die\n", ArrayInfo->TopCellArray[i].WhichDie);
+        printf("\t\tRowID = %d, left_edge = %d, right_edge = %d\n", ArrayInfo->TopCellArray[i].rowID, ArrayInfo->TopCellArray[i].left_edge, ArrayInfo->TopCellArray[i].right_edge);
+        printf("\t\t(libCellSizeX, libCellSizeY) = (%d, %d)\n", ArrayInfo->TopCellArray[i].libCellSizeX, ArrayInfo->TopCellArray[i].libCellSizeY);
+        printf("\n");
+    }
+}

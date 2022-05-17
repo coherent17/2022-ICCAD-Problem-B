@@ -23,5 +23,5 @@ void InitializePlacement(Die *currentDie, TopBottomCellArray *ArrayInfo, int fla
 bool isValidPlacement(vector <vector <int>> PlacementState, int row, int left_edge, int right_edge);
 void printPlacementState(Die current_die, bool PartitionAgain);
 void OutputCellLocateState(TopBottomCellArray ArrayInfo, Die top_die, Die bottom_die, vector <RawNet> rawnet, vector <Tech_menu> TechMenu, vector <int> PartitionResult, vector <Instance> InstanceArray);
-
+void printArrayInfo(TopBottomCellArray *ArrayInfo);
 #endif
