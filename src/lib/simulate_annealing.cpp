@@ -236,6 +236,10 @@ bool accept(int new_cost, int old_cost, double Temperature){
 }
 
 SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
+
+	//open a file to record the cost
+	FILE *costOUT = fopen("cost.out", "w");
+
 	double Temperature = ANNEALING_TEMPERATURE;
 	SA_CONTENT new_SA_contentPtr;
 
@@ -253,6 +257,7 @@ SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
 
 				if(accept(new_cost, old_cost, Temperature)){
 					printf("Accepted!\n");
+					fprintf(costOUT, "%d\n", new_cost);
 
 					if(moveFlag == 0){
 						SA_contentPtr.bottom_die = new_SA_contentPtr.bottom_die;
@@ -274,5 +279,6 @@ SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
 		}
 		Temperature = Temperature * alpha;
 	}
+	fclose(costOUT);
 	return SA_contentPtr;
 }

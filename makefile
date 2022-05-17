@@ -2,7 +2,7 @@ CC = g++
 CFLAGS = -g -Wall -ggdb3
 BINS = main
 SRC_DIRS := src/lib
-OUT = test.svg placement.txt
+OUT = test.svg placement.txt cost.out cost.svg
 
 CHECKCC = valgrind
 CHECKFLAGS = --leak-check=full -s --show-leak-kinds=all --track-origins=yes 
@@ -21,6 +21,7 @@ $(BINS): src/main.cpp $(OBJS)
 do:
 	$(CHECKCC) $(CHECKFLAGS) ./main Benchmark/case1.txt
 	python3 visualize_placement.py
+	python3 visualize_cost.py
 
 clean:
 	rm -rf src/lib/*.o main $(OUT)
