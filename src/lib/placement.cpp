@@ -36,6 +36,7 @@ void InitializePlacement(Die *currentDie, TopBottomCellArray *ArrayInfo, int fla
     int sucessful_placement_count = 0;
     if(flag == 0){
         for( int i=0; i< (*ArrayInfo).BottomCellNumber; i++){
+            printf("i = %d\n", i);
             int row=0;
             int left_edge = currentDie->startX;
             int right_edge = left_edge + (*ArrayInfo).BottomCellArray[i].libCellSizeX-1 ;
@@ -161,7 +162,7 @@ void OutputCellLocateState(TopBottomCellArray ArrayInfo, Die top_die, Die bottom
         //find the pin location that rawnet[i] connect to
         for(int j=0; j <rawnet[i].numPins; j++){
             char buffer[INSTANCE_NAME_SIZE];
-            memset(buffer,0,INSTANCE_NAME_SIZE);
+            memset(buffer,'\0',INSTANCE_NAME_SIZE);
             char PinName[PIN_NAME_SIZE];
             strcpy(PinName, rawnet[i].Connection[j].libPinName);
             strncpy(buffer, &rawnet[i].Connection[j].instName[1], strlen(rawnet[i].Connection[j].instName)-1);
@@ -178,8 +179,10 @@ void OutputCellLocateState(TopBottomCellArray ArrayInfo, Die top_die, Die bottom
 
                 //get the pin placement reference to this instance
                 char current_tech[TECH_NAME_SIZE];
+                memset(current_tech,'\0', TECH_NAME_SIZE);
                 strcpy(current_tech, bottom_die.tech);
                 char libCellName[LIBCELL_NAME_SIZE];
+                memset(libCellName,'\0',LIBCELL_NAME_SIZE);
                 strcpy(libCellName, InstanceArray[current_instance-1].libCellName);
 
                 for(int k=0; k < (int)TechMenu.size(); k++){
@@ -213,8 +216,10 @@ void OutputCellLocateState(TopBottomCellArray ArrayInfo, Die top_die, Die bottom
 
                 //get the pin placement reference to this instance
                 char current_tech[TECH_NAME_SIZE];
+                memset(current_tech,'\0', TECH_NAME_SIZE);
                 strcpy(current_tech, top_die.tech);
                 char libCellName[LIBCELL_NAME_SIZE];
+                memset(libCellName,'\0',LIBCELL_NAME_SIZE);
                 strcpy(libCellName, InstanceArray[current_instance-1].libCellName);
 
                 for(int k=0; k < (int)TechMenu.size(); k++){

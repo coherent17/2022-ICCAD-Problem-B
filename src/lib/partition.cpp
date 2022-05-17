@@ -201,6 +201,7 @@ void getSizeOfCellArray(TopBottomCellArray *ArrayInfo, vector <Tech_menu> TechMe
 	for(int i = 0; i < ArrayInfo->BottomCellNumber; i++){
 		//get current libcellname from instance array
 		char current_libCellName[LIBCELL_NAME_SIZE];
+		memset(current_libCellName,'\0', LIBCELL_NAME_SIZE);
 		strncpy(current_libCellName, InstanceArray[ArrayInfo->BottomCellArray[i].cellID].libCellName, strlen(InstanceArray[ArrayInfo->BottomCellArray[i].cellID].libCellName));
 		//find the correct techMenu (TA, TB)
 		for(int j = 0; j < (int)TechMenu.size(); j++){
@@ -224,6 +225,7 @@ void getSizeOfCellArray(TopBottomCellArray *ArrayInfo, vector <Tech_menu> TechMe
 	for(int i = 0; i < ArrayInfo->TopCellNumber; i++){
 		//get current libcellname from instance array
 		char current_libCellName[LIBCELL_NAME_SIZE];
+		memset(current_libCellName,'\0', LIBCELL_NAME_SIZE);
 		strncpy(current_libCellName, InstanceArray[ArrayInfo->TopCellArray[i].cellID].libCellName, strlen(InstanceArray[ArrayInfo->TopCellArray[i].cellID].libCellName));
 		//find the correct techMenu (TA, TB)
 		for(int j = 0; j < (int)TechMenu.size(); j++){

@@ -37,8 +37,9 @@ int Cost(SA_CONTENT SA_contentPtr){
         //find the pin location that rawnet[i] connect to
         for(int j=0; j <rawnet[i].numPins; j++){
             char buffer[INSTANCE_NAME_SIZE];
-            memset(buffer,0,INSTANCE_NAME_SIZE);
+            memset(buffer,'\0',INSTANCE_NAME_SIZE);
             char PinName[PIN_NAME_SIZE];
+            memset(PinName,'\0',PIN_NAME_SIZE);
             strcpy(PinName, rawnet[i].Connection[j].libPinName);
             strncpy(buffer, &rawnet[i].Connection[j].instName[1], strlen(rawnet[i].Connection[j].instName)-1);
             int current_instance = atoi(buffer);
@@ -46,10 +47,12 @@ int Cost(SA_CONTENT SA_contentPtr){
             //check the instance belongs to which die
             int current_instance_partition = PartitionResult[current_instance-1];
             int index = ArrayInfo.PartitionIndexResult[current_instance-1];
-            int reference_left_edge;
-            int reference_row;
+            int reference_left_edge = 0;
+            int reference_row = 0;
             char current_tech[TECH_NAME_SIZE];
+            memset(current_tech,'\0',TECH_NAME_SIZE);
             char libCellName[LIBCELL_NAME_SIZE];
+            memset(libCellName,'\0',LIBCELL_NAME_SIZE);
 
             if(current_instance_partition == 0){
                 reference_left_edge = ArrayInfo.BottomCellArray[index].left_edge;
@@ -116,9 +119,9 @@ SA_CONTENT Move1(SA_CONTENT SA_contentPtr, int *moveFlag){
 	int index = PartitionIndexResult[random_instance];																	//check the instance data is store in which index
 
 	//the instance current placement info
-	int left_edge;
-	int right_edge;
-	int rowID;
+	int left_edge = 0;
+	int right_edge = 0;
+	int rowID = 0;
 	Die currentDie;
 
 	if(random_instance_partition_result == 0){
