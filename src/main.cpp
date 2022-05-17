@@ -33,15 +33,15 @@ int main(int argc, char *argv[]){
 
 	//read file part
 	readTechnologyInfo(input, &NumTechnologies, TechMenu);			
-	printTechnologyInfo(NumTechnologies, TechMenu);
+	//printTechnologyInfo(NumTechnologies, TechMenu);
 	readDieInfo(input, &top_die, &bottom_die);
-	printDieInfo(top_die, bottom_die);
+	//printDieInfo(top_die, bottom_die);
 	readHybridTerminalInfo(input, &terminal);
-	printHybridTerminalInfo(terminal);
+	//printHybridTerminalInfo(terminal);
 	readInstanceInfo(input, &NumInstances, InstanceArray);
 	printInstanceInfo(NumInstances, InstanceArray);
 	readNetInfo(input, &NumNets, rawnet);
-	printNetInfo(NumNets, rawnet);
+	//printNetInfo(NumNets, rawnet);
 
 
 	//partition part
