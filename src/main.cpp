@@ -32,16 +32,16 @@ int main(int argc, char *argv[]){
 
 
 	//read file part
-	readTechnologyInfo(input, &NumTechnologies, TechMenu);			
-	//printTechnologyInfo(NumTechnologies, TechMenu);
+	readTechnologyInfo(input, &NumTechnologies, TechMenu);	
+	printTechnologyInfo(NumTechnologies, TechMenu);
 	readDieInfo(input, &top_die, &bottom_die);
-	//printDieInfo(top_die, bottom_die);
+	printDieInfo(top_die, bottom_die);
 	readHybridTerminalInfo(input, &terminal);
-	//printHybridTerminalInfo(terminal);
+	printHybridTerminalInfo(terminal);
 	readInstanceInfo(input, &NumInstances, InstanceArray);
 	printInstanceInfo(NumInstances, InstanceArray);
 	readNetInfo(input, &NumNets, rawnet);
-	//printNetInfo(NumNets, rawnet);
+	printNetInfo(NumNets, rawnet);
 
 
 	//partition part
@@ -127,6 +127,6 @@ int main(int argc, char *argv[]){
 	top_die = SA_contentPtr.top_die;
 	bottom_die = SA_contentPtr.bottom_die;
 	ArrayInfo = SA_contentPtr.ArrayInfo;
-	OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
+	+OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
 	return 0;
 }
