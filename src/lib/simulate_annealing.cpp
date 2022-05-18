@@ -11,6 +11,19 @@
 #include "random.h"
 #include "simulate_annealing.h"
 
+bool SA_isValidPlacement(vector <vector <int>> PlacementState, int row, int left_edge, int right_edge){
+    
+    for(int i=left_edge; i<=right_edge; i++){
+        // printf("%d ",i);
+        if(PlacementState[row][i]!=EMPTY_STATE){
+            // printf("\n");
+            return false;
+        }
+    }
+    // printf(" \n");
+    return true;
+}
+
 int Cost(SA_CONTENT SA_contentPtr){
 
 	//unpack the SA_contentPtr
@@ -153,7 +166,7 @@ SA_CONTENT Move1(SA_CONTENT SA_contentPtr, int *moveFlag){
 	left_edge = 0;
 	right_edge = 0 + length;
 	for(int i=0; i < currentDie.rowLength && right_edge < currentDie.rowLength; i++){
-		if(isValidPlacement(currentDie.PlacementState, random_rowID, left_edge, right_edge)){
+		if(SA_isValidPlacement(currentDie.PlacementState, random_rowID, left_edge, right_edge)){
 			point temp;
 			temp.x_cor = left_edge;
 			temp.y_cor = right_edge;
@@ -172,9 +185,9 @@ SA_CONTENT Move1(SA_CONTENT SA_contentPtr, int *moveFlag){
 		return new_SA_contentPtr;
 	}
 	else{
-		printf("\n**********************************************************************************************\n");
+		//printf("\n**********************************************************************************************\n");
 		printf("choose random instance = %d, and random rowID = %d\n", random_instance, random_rowID);
-		printPlacementState(currentDie,0);
+		//printPlacementState(currentDie,0);
 		int random_vector_index = getIntRandom(0, (int)ValidPlacementList.size()-1);
 		left_edge = ValidPlacementList[random_vector_index].x_cor;
 		right_edge = ValidPlacementList[random_vector_index].y_cor;
@@ -194,18 +207,18 @@ SA_CONTENT Move1(SA_CONTENT SA_contentPtr, int *moveFlag){
 
 		//update the cellarray and rowID
 		if(random_instance_partition_result == 0){
-			printf("left edge = %d, right_edge = %d\n", left_edge, right_edge);
+			//printf("left edge = %d, right_edge = %d\n", left_edge, right_edge);
 			ArrayInfo.BottomCellArray[index].left_edge = left_edge;
 			ArrayInfo.BottomCellArray[index].right_edge = right_edge;
 			ArrayInfo.BottomCellArray[index].rowID = random_rowID;
-			printf("new left edge = %d, new right edge = %d\n", ArrayInfo.BottomCellArray[index].left_edge, ArrayInfo.BottomCellArray[index].right_edge);
+			//printf("new left edge = %d, new right edge = %d\n", ArrayInfo.BottomCellArray[index].left_edge, ArrayInfo.BottomCellArray[index].right_edge);
 		}
 		else if(random_instance_partition_result == 1){
-			printf("left edge = %d, right_edge = %d\n", left_edge, right_edge);
+			//printf("left edge = %d, right_edge = %d\n", left_edge, right_edge);
 			ArrayInfo.TopCellArray[index].left_edge = left_edge;
 			ArrayInfo.TopCellArray[index].right_edge = right_edge;
 			ArrayInfo.TopCellArray[index].rowID = random_rowID;	
-			printf("new left edge = %d, new right edge = %d\n", ArrayInfo.TopCellArray[index].left_edge, ArrayInfo.TopCellArray[index].right_edge);		
+			//printf("new left edge = %d, new right edge = %d\n", ArrayInfo.TopCellArray[index].left_edge, ArrayInfo.TopCellArray[index].right_edge);		
 		}
 
 		new_SA_contentPtr.top_die = top_die;
@@ -218,8 +231,8 @@ SA_CONTENT Move1(SA_CONTENT SA_contentPtr, int *moveFlag){
 		new_SA_contentPtr.ArrayInfo.TopCellArray = ArrayInfo.TopCellArray;
 		new_SA_contentPtr.ArrayInfo.BottomCellArray = ArrayInfo.BottomCellArray;
 
-		printPlacementState(currentDie, 0);
-		printf("**********************************************************************************************\n");
+		//printPlacementState(currentDie, 0);
+		//printf("**********************************************************************************************\n");
 		return new_SA_contentPtr; 
 	}
 }
@@ -250,8 +263,8 @@ SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
 		for(int i = 0; i < INNER_LOOP_TIMES; i++){
 			int moveFlag;
 			new_SA_contentPtr = Move1(SA_contentPtr, &moveFlag);
-			printPlacementState(new_SA_contentPtr.top_die,0);
-			printPlacementState(new_SA_contentPtr.bottom_die,0);
+			//printPlacementState(new_SA_contentPtr.top_die,0);
+			//printPlacementState(new_SA_contentPtr.bottom_die,0);
 
 			if(moveFlag != -1){
 				int old_cost = Cost(SA_contentPtr);
@@ -265,14 +278,14 @@ SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
 					if(moveFlag == 0){
 						SA_contentPtr.bottom_die = new_SA_contentPtr.bottom_die;
 						SA_contentPtr.ArrayInfo = new_SA_contentPtr.ArrayInfo;
-						printPlacementState(SA_contentPtr.bottom_die,0);
+						//printPlacementState(SA_contentPtr.bottom_die,0);
 						//printArrayInfo(&SA_contentPtr.ArrayInfo);
 						printf("End\n\n");
 					}
 					else if(moveFlag == 1){
 						SA_contentPtr.top_die = new_SA_contentPtr.top_die;
 						SA_contentPtr.ArrayInfo = new_SA_contentPtr.ArrayInfo;
-						printPlacementState(SA_contentPtr.top_die,0);
+						//printPlacementState(SA_contentPtr.top_die,0);
 						//printArrayInfo(&SA_contentPtr.ArrayInfo);
 						printf("End\n\n");
 					}
