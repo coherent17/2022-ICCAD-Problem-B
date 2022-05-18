@@ -8,17 +8,12 @@
 #include "readfile.h"
 #include "partition.h"
 
-bool isValidPlacement(vector <vector <int>> PlacementState, int row, int left_edge, int right_edge){
+bool isValidPlacement(vector <int> NewLeftEdgeArray, int currentRow, int left_edge, int right_edge, int rowLength){
     
-    for(int i=left_edge; i<=right_edge; i++){
-        // printf("%d ",i);
-        if(PlacementState[row][i]!=EMPTY_STATE){
-            // printf("\n");
-            return false;
-        }
+    if(right_edge <= rowLength-1){
+        return true;
     }
-    // printf(" \n");
-    return true;
+    else return false;
 }
 
 void fillSegment(vector <vector <int>> &PlacementState, int row, int left_pointer, int right_pointer, int cellID){
@@ -34,83 +29,61 @@ void InitializePlacement(Die *currentDie, TopBottomCellArray *ArrayInfo, int fla
     int usingCell = 0;
     vector <vector <int>> PlacementState(currentDie->repeatCount,vector <int>(currentDie->rowLength,EMPTY_STATE));
     int sucessful_placement_count = 0;
+    int currentCellNumber = 0;
+    vector <Cell> currentCellArray;
     if(flag == 0){
-        for( int i=0; i< (*ArrayInfo).BottomCellNumber; i++){
-            printf("i = %d\n", i);
-            int row=0;
-            int left_edge = currentDie->startX;
-            int right_edge = left_edge + (*ArrayInfo).BottomCellArray[i].libCellSizeX-1 ;
-            while( row < currentDie->rowLength){
-                //find the continue segmenet to place instance
-                if( isValidPlacement(PlacementState, row, left_edge, right_edge)){
-                    fillSegment(PlacementState, row, left_edge, right_edge, (*ArrayInfo).BottomCellArray[i].cellID);
-                    (*ArrayInfo).BottomCellArray[i].rowID = row;
-                    (*ArrayInfo).BottomCellArray[i].left_edge = left_edge;
-                    (*ArrayInfo).BottomCellArray[i].right_edge = right_edge;
-                    sucessful_placement_count++;
-                    usingCell += right_edge - left_edge + 1;
-                    break;
-                }
-                else{
-                    left_edge++;
-                    right_edge++;
-                }
-                if( right_edge >= currentDie->rowLength ){
-                    row++;
-                    if(row >= currentDie->repeatCount){
-                        return;
-                    }
-                    left_edge = currentDie->startX;
-                    right_edge = left_edge + (*ArrayInfo).BottomCellArray[i].libCellSizeX-1;
-                }
-            }
-        }
-        if(sucessful_placement_count == (*ArrayInfo).BottomCellNumber) *PartitionAgain = false;
-        printf("successful placement count : %d \n",sucessful_placement_count);
-
-        printf("MaxUtil of bottom die: %d Current Partition Util: %d\n\n", currentDie->MaxUtil, usingCell * 100/currentDie->rowLength /currentDie->repeatCount);
-        if(usingCell * 100/currentDie->rowLength /currentDie->repeatCount > currentDie->MaxUtil) *PartitionAgain = true;
+        currentCellNumber = (*ArrayInfo).BottomCellNumber;
+        currentCellArray = (*ArrayInfo).BottomCellArray;
     }
     else if(flag == 1){
-        for( int i=0; i<(*ArrayInfo).TopCellNumber; i++){
-            int row=0;
-            int left_edge = currentDie->startX;
-            int right_edge = left_edge + (*ArrayInfo).TopCellArray[i].libCellSizeX-1 ;
-            while( row < currentDie->rowLength){
-                //find the continue segmenet to place instance
-                if( isValidPlacement(PlacementState, row, left_edge, right_edge)){
-                    fillSegment(PlacementState, row, left_edge, right_edge, (*ArrayInfo).TopCellArray[i].cellID);
-                    (*ArrayInfo).TopCellArray[i].rowID = row;
-                    (*ArrayInfo).TopCellArray[i].left_edge = left_edge;
-                    (*ArrayInfo).TopCellArray[i].right_edge = right_edge;
-                    sucessful_placement_count++;
-                    usingCell += right_edge - left_edge + 1;
-                    break;
-                }
-                else{
-                    left_edge++;
-                    right_edge++;
-                }
-                if( right_edge >= currentDie->rowLength ){
-                    row++;
-                    if(row >= currentDie->repeatCount){
-                        return;
-                    }
-                    left_edge = currentDie->startX;
-                    right_edge = left_edge + (*ArrayInfo).TopCellArray[i].libCellSizeX-1;
-                }
-            }
-        }
-        if(sucessful_placement_count == (*ArrayInfo).TopCellNumber) *PartitionAgain = false;
-        printf("successful placement count : %d \n",sucessful_placement_count);
-
-        printf("MaxUtil of top die: %d Current Partition Util: %d\n\n", currentDie->MaxUtil, usingCell * 100/currentDie->rowLength /currentDie->repeatCount);
-        if(usingCell * 100/currentDie->rowLength /currentDie->repeatCount > currentDie->MaxUtil) *PartitionAgain = true;
+        currentCellNumber = (*ArrayInfo).TopCellNumber;
+        currentCellArray = (*ArrayInfo).TopCellArray;
     }
     else{
         assert(flag!=0 || flag!=1);
     }
+
+    //linear probing 
+    int currentRow = 0;
+    int left_edge = currentDie->startX;
+    int right_edge;
+    int rowLength = currentDie->rowLength;
+    vector <int> NewLeftEdgeArray(currentDie->repeatCount,0);
+
+    for(int i=0; i < currentCellNumber; i++){
+
+        for(int j=0; j<currentDie->repeatCount; j++){
+            currentRow = (currentRow+j) % currentDie->repeatCount;      //current+1+j ?
+            left_edge = NewLeftEdgeArray[currentRow];
+            right_edge = left_edge + currentCellArray[i].libCellSizeX-1;
+            if(isValidPlacement(NewLeftEdgeArray, currentRow, left_edge, right_edge, rowLength)){
+                fillSegment(PlacementState, currentRow, left_edge, right_edge, currentCellArray[i].cellID);
+                currentCellArray[i].rowID = currentRow;
+                currentCellArray[i].left_edge = left_edge;
+                currentCellArray[i].right_edge = right_edge;
+                sucessful_placement_count++;
+                usingCell += right_edge - left_edge +1;
+                NewLeftEdgeArray[currentRow] = right_edge+1;
+                break; 
+            }
+        }
+    }
+
+    if(sucessful_placement_count == currentCellNumber) *PartitionAgain = false;
+    printf("successful placement count: %d \n", sucessful_placement_count);
+
+    printf("MaxUtil of bottom die: %d Current Partition Util: %d \n\n", currentDie->MaxUtil, usingCell *100/rowLength / currentDie->repeatCount);
+    if(usingCell * 100/currentDie->rowLength / currentDie->repeatCount > currentDie->MaxUtil) *PartitionAgain = true;
+
+    //pack data
+    if(flag == 0){
+        (*ArrayInfo).BottomCellArray = currentCellArray;
+    }
+    else if(flag == 1){
+        (*ArrayInfo).TopCellArray = currentCellArray;
+    }
     currentDie->PlacementState = PlacementState;
+
 }
 
 void printPlacementState(Die current_die, bool PartitionAgain){
