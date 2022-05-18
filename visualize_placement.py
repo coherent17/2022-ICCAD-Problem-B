@@ -17,7 +17,7 @@ def plot_rectangle(ax, x1, y1, x2, y2, c):
 def readFile():
    file = open("placement.txt", 'r')
 
-   fig, ax = plt.subplots(1,2, figsize = (20,6))
+   fig, ax = plt.subplots(1,2, figsize = (100,30))
    bottom_repeatCount, bottom_rowLength, bottom_die_rowHeight = file.readline().split()
    bottom_repeatCount = int(bottom_repeatCount)
    bottom_rowLength = int(bottom_rowLength)
@@ -34,7 +34,7 @@ def readFile():
       left_edge = int(left_edge)
       right_edge = int(right_edge)
       plot_rectangle(ax[0], left_edge, rowID * bottom_die_rowHeight, right_edge + 1, (rowID + 1) * bottom_die_rowHeight,'k')
-      ax[0].text((left_edge + right_edge) / 2, (rowID + 0.5) * bottom_die_rowHeight, "C" + str(cellID + 1), fontsize = 20, color ="black") 
+      #ax[0].text((left_edge + right_edge) / 2, (rowID + 0.5) * bottom_die_rowHeight, "C" + str(cellID + 1), fontsize = 20, color ="black") 
 
 
    top_repeatCount, top_rowLength, top_die_rowHeight = file.readline().split()
@@ -53,7 +53,7 @@ def readFile():
       left_edge = int(left_edge)
       right_edge = int(right_edge)
       plot_rectangle(ax[1], left_edge, rowID * top_die_rowHeight, right_edge + 1, (rowID + 1) * top_die_rowHeight, 'k')
-      ax[1].text((left_edge + right_edge) / 2, (rowID + 0.5) * top_die_rowHeight, "C" + str(cellID + 1), fontsize = 20, color ="black") 
+      #ax[1].text((left_edge + right_edge) / 2, (rowID + 0.5) * top_die_rowHeight, "C" + str(cellID + 1), fontsize = 20, color ="black") 
 
 
    #plot the pin which connect to the same net
@@ -71,8 +71,8 @@ def readFile():
          x_cor = int(x_cor)
          y_cor = int(y_cor)
          comeFrom = int(comeFrom)
-         ax[comeFrom].plot(x_cor, y_cor, color = color[i], Marker = '*', MarkerSize = 10)
-         ax[(comeFrom+1 )% 2].plot(x_cor, y_cor, color = color[i], Marker = '*', MarkerSize = 10, alpha = 0.1)
+         #ax[comeFrom].plot(x_cor, y_cor, color = color[i], Marker = '*', MarkerSize = 10)
+         #ax[(comeFrom+1 )% 2].plot(x_cor, y_cor, color = color[i], Marker = '*', MarkerSize = 10, alpha = 0.1)
 
 
    #plot the bbox
