@@ -127,6 +127,6 @@ int main(int argc, char *argv[]){
 	top_die = SA_contentPtr.top_die;
 	bottom_die = SA_contentPtr.bottom_die;
 	ArrayInfo = SA_contentPtr.ArrayInfo;
-	+OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
+	OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
 	return 0;
 }
