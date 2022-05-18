@@ -165,6 +165,7 @@ SA_CONTENT Move1(SA_CONTENT SA_contentPtr, int *moveFlag){
 	int length = right_edge - left_edge;
 	left_edge = 0;
 	right_edge = 0 + length;
+	int listCount = 0;
 	for(int i=0; i < currentDie.rowLength && right_edge < currentDie.rowLength; i++){
 		if(SA_isValidPlacement(currentDie.PlacementState, random_rowID, left_edge, right_edge)){
 			point temp;
@@ -172,6 +173,8 @@ SA_CONTENT Move1(SA_CONTENT SA_contentPtr, int *moveFlag){
 			temp.y_cor = right_edge;
 			temp.comeFrom = 0;
 			ValidPlacementList.emplace_back(temp);
+			listCount++;
+			if(listCount == 5) break;
 		}
 		left_edge++;
 		right_edge++;
@@ -266,10 +269,13 @@ SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
 			//printPlacementState(new_SA_contentPtr.top_die,0);
 			//printPlacementState(new_SA_contentPtr.bottom_die,0);
 
+			if(moveFlag == -1) printf("Denied!\n");
+
 			if(moveFlag != -1){
 				int old_cost = Cost(SA_contentPtr);
 				int new_cost = Cost(new_SA_contentPtr);
 				printf("old_cost = %d, new_cost = %d\n",old_cost, new_cost);
+				printf("at temperature = %f, INNER_LOOP_TIMES = %d\n", Temperature, i);
 
 				if(accept(new_cost, old_cost, Temperature)){
 					printf("Accepted!\n");

@@ -82,8 +82,8 @@ def readFile():
       x_max = int(x_max)
       y_min = int(y_min)
       y_max = int(y_max)
-      plot_rectangle(ax[0], x_min, y_min, x_max, y_max, color[i])
-      plot_rectangle(ax[1], x_min, y_min, x_max, y_max, color[i])
+      #plot_rectangle(ax[0], x_min, y_min, x_max, y_max, color[i])
+      #plot_rectangle(ax[1], x_min, y_min, x_max, y_max, color[i])
 
 
    ax[0].grid(True, alpha = 0.3)

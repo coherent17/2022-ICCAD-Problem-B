@@ -109,24 +109,24 @@ int main(int argc, char *argv[]){
 		printPlacementState(top_die, TopPartitionAgain);
 	}
 	printf("repartition %d times\n", repartitionCount);
-	//OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
+	OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
 
 
 
 	//Construct Simulate Annealing Content Struct:
-	SA_CONTENT SA_contentPtr;
-	SA_contentPtr.top_die = top_die;
-	SA_contentPtr.bottom_die = bottom_die;
-	SA_contentPtr.TechMenu = TechMenu;
-	SA_contentPtr.rawnet = rawnet;
-	SA_contentPtr.PartitionResult = PartitionResult;
-	SA_contentPtr.InstanceArray = InstanceArray;
-	SA_contentPtr.ArrayInfo = ArrayInfo;
+	// SA_CONTENT SA_contentPtr;
+	// SA_contentPtr.top_die = top_die;
+	// SA_contentPtr.bottom_die = bottom_die;
+	// SA_contentPtr.TechMenu = TechMenu;
+	// SA_contentPtr.rawnet = rawnet;
+	// SA_contentPtr.PartitionResult = PartitionResult;
+	// SA_contentPtr.InstanceArray = InstanceArray;
+	// SA_contentPtr.ArrayInfo = ArrayInfo;
 
-	SA_contentPtr = SimulateAnnealing(SA_contentPtr);
-	top_die = SA_contentPtr.top_die;
-	bottom_die = SA_contentPtr.bottom_die;
-	ArrayInfo = SA_contentPtr.ArrayInfo;
-	OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
+	// SA_contentPtr = SimulateAnnealing(SA_contentPtr);
+	// top_die = SA_contentPtr.top_die;
+	// bottom_die = SA_contentPtr.bottom_die;
+	// ArrayInfo = SA_contentPtr.ArrayInfo;
+	//OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
 	return 0;
 }
