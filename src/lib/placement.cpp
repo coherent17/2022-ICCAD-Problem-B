@@ -53,7 +53,8 @@ void InitializePlacement(Die *currentDie, TopBottomCellArray *ArrayInfo, int fla
     for(int i=0; i < currentCellNumber; i++){
 
         for(int j=0; j<currentDie->repeatCount; j++){
-            currentRow = (currentRow+j) % currentDie->repeatCount;      //current+1+j ?
+            int rowSpacing = (currentDie->repeatCount % 2 == 0) ? 3 : 2;
+            currentRow = (currentRow+j + rowSpacing) % currentDie->repeatCount;      //current+1+j ?
             left_edge = NewLeftEdgeArray[currentRow];
             right_edge = left_edge + currentCellArray[i].libCellSizeX-1;
             if(isValidPlacement(NewLeftEdgeArray, currentRow, left_edge, right_edge, rowLength)){
