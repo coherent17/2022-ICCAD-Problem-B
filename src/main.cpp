@@ -33,15 +33,15 @@ int main(int argc, char *argv[]){
 
 	//read file part
 	readTechnologyInfo(input, &NumTechnologies, TechMenu);	
-	printTechnologyInfo(NumTechnologies, TechMenu);
+	//printTechnologyInfo(NumTechnologies, TechMenu);
 	readDieInfo(input, &top_die, &bottom_die);
-	printDieInfo(top_die, bottom_die);
+	//printDieInfo(top_die, bottom_die);
 	readHybridTerminalInfo(input, &terminal);
-	printHybridTerminalInfo(terminal);
+	//printHybridTerminalInfo(terminal);
 	readInstanceInfo(input, &NumInstances, InstanceArray);
-	printInstanceInfo(NumInstances, InstanceArray);
+	//printInstanceInfo(NumInstances, InstanceArray);
 	readNetInfo(input, &NumNets, rawnet);
-	printNetInfo(NumNets, rawnet);
+	//printNetInfo(NumNets, rawnet);
 
 
 	//partition part
@@ -50,24 +50,24 @@ int main(int argc, char *argv[]){
 	ReadCutSize(&NumTerminal);									            //read cut size
 	ReadPartitionResult(&ArrayInfo, NumInstances, PartitionResult);			//store the partition result into cellarray in a
 	UpdateInstanceArray(InstanceArray, PartitionResult, top_die, bottom_die);
-	printPartitionResult(ArrayInfo, InstanceArray, PartitionResult);
+	//printPartitionResult(ArrayInfo, InstanceArray, PartitionResult);
 
 
 	//create netarray and cellarray
 	GetCellOfNet(rawnet, NetArray, NumNets);
-	PrintNetArray(NetArray, NumNets);
+	//PrintNetArray(NetArray, NumNets);
 	GetNetOfCell(NetArray, &ArrayInfo, PartitionResult);
 	getSizeOfCellArray(&ArrayInfo, TechMenu, top_die, bottom_die, InstanceArray);
-	printTopBottomCellArray(&ArrayInfo, PartitionResult);
+	//printTopBottomCellArray(&ArrayInfo, PartitionResult);
 
 
 	//initial placement
 	bool BottomPartitionAgain;
 	bool TopPartitionAgain;
 	InitializePlacement(&bottom_die, &ArrayInfo, 0, &BottomPartitionAgain);
-	printPlacementState(bottom_die, BottomPartitionAgain);
+	//printPlacementState(bottom_die, BottomPartitionAgain);
 	InitializePlacement(&top_die, &ArrayInfo, 1, &TopPartitionAgain);
-	printPlacementState(top_die, TopPartitionAgain);
+	//printPlacementState(top_die, TopPartitionAgain);
 
 
 	//repartition if the current can't have a legal placement
@@ -94,39 +94,39 @@ int main(int argc, char *argv[]){
 		ReadCutSize(&NumTerminal);
 		ReadPartitionResult(&ArrayInfo, NumInstances, PartitionResult);
 		UpdateInstanceArray(InstanceArray, PartitionResult, top_die, bottom_die);
-		printPartitionResult(ArrayInfo, InstanceArray, PartitionResult);
+		//printPartitionResult(ArrayInfo, InstanceArray, PartitionResult);
 
 
 		//create netarray and cellarray
-		PrintNetArray(NetArray, NumNets);
+		//PrintNetArray(NetArray, NumNets);
 		GetNetOfCell(NetArray, &ArrayInfo, PartitionResult);
 		getSizeOfCellArray(&ArrayInfo, TechMenu, top_die, bottom_die, InstanceArray);
-		printTopBottomCellArray(&ArrayInfo, PartitionResult);
+		//printTopBottomCellArray(&ArrayInfo, PartitionResult);
 
 		InitializePlacement(&bottom_die, &ArrayInfo, 0, &BottomPartitionAgain);
-		printPlacementState(bottom_die, BottomPartitionAgain);
+		//printPlacementState(bottom_die, BottomPartitionAgain);
 		InitializePlacement(&top_die, &ArrayInfo, 1, &TopPartitionAgain);
-		printPlacementState(top_die, TopPartitionAgain);
+		//printPlacementState(top_die, TopPartitionAgain);
 	}
 	printf("repartition %d times\n", repartitionCount);
-	OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
+	//OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
 
 
 
 	//Construct Simulate Annealing Content Struct:
-	// SA_CONTENT SA_contentPtr;
-	// SA_contentPtr.top_die = top_die;
-	// SA_contentPtr.bottom_die = bottom_die;
-	// SA_contentPtr.TechMenu = TechMenu;
-	// SA_contentPtr.rawnet = rawnet;
-	// SA_contentPtr.PartitionResult = PartitionResult;
-	// SA_contentPtr.InstanceArray = InstanceArray;
-	// SA_contentPtr.ArrayInfo = ArrayInfo;
+	SA_CONTENT SA_contentPtr;
+	SA_contentPtr.top_die = top_die;
+	SA_contentPtr.bottom_die = bottom_die;
+	SA_contentPtr.TechMenu = TechMenu;
+	SA_contentPtr.rawnet = rawnet;
+	SA_contentPtr.PartitionResult = PartitionResult;
+	SA_contentPtr.InstanceArray = InstanceArray;
+	SA_contentPtr.ArrayInfo = ArrayInfo;
 
-	// SA_contentPtr = SimulateAnnealing(SA_contentPtr);
-	// top_die = SA_contentPtr.top_die;
-	// bottom_die = SA_contentPtr.bottom_die;
-	// ArrayInfo = SA_contentPtr.ArrayInfo;
-	//OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
+	SA_contentPtr = SimulateAnnealing(SA_contentPtr);
+	top_die = SA_contentPtr.top_die;
+	bottom_die = SA_contentPtr.bottom_die;
+	ArrayInfo = SA_contentPtr.ArrayInfo;
+	OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
 	return 0;
 }

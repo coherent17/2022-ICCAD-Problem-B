@@ -269,7 +269,11 @@ SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
 			//printPlacementState(new_SA_contentPtr.top_die,0);
 			//printPlacementState(new_SA_contentPtr.bottom_die,0);
 
-			if(moveFlag == -1) printf("Denied!\n");
+			if(moveFlag == -1){
+				printf("No such place to place!\n");
+				printf("Denied!\n");
+				printf("End\n\n");
+			}
 
 			if(moveFlag != -1){
 				int old_cost = Cost(SA_contentPtr);
@@ -295,7 +299,10 @@ SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
 						//printArrayInfo(&SA_contentPtr.ArrayInfo);
 						printf("End\n\n");
 					}
-					
+				}
+				else{
+					printf("Denied!\n");
+					printf("End\n\n");
 				}
 			}
 		}

@@ -17,7 +17,7 @@ def plot_rectangle(ax, x1, y1, x2, y2, c):
 def readFile():
    file = open("placement.txt", 'r')
 
-   fig, ax = plt.subplots(1,2, figsize = (100,30))
+   fig, ax = plt.subplots(1,2, figsize = (400,150))
    bottom_repeatCount, bottom_rowLength, bottom_die_rowHeight = file.readline().split()
    bottom_repeatCount = int(bottom_repeatCount)
    bottom_rowLength = int(bottom_rowLength)
@@ -82,8 +82,8 @@ def readFile():
       x_max = int(x_max)
       y_min = int(y_min)
       y_max = int(y_max)
-      #plot_rectangle(ax[0], x_min, y_min, x_max, y_max, color[i])
-      #plot_rectangle(ax[1], x_min, y_min, x_max, y_max, color[i])
+      plot_rectangle(ax[0], x_min, y_min, x_max, y_max, color[i])
+      plot_rectangle(ax[1], x_min, y_min, x_max, y_max, color[i])
 
 
    ax[0].grid(True, alpha = 0.3)
