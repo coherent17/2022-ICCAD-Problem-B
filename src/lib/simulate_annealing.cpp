@@ -176,9 +176,9 @@ SA_CONTENT Move1(SA_CONTENT SA_contentPtr, int *moveFlag){
 			listCount++;
 			if(listCount == 5) break;
 		}
-		int colSpacing = getIntRandom(0,(int)currentDie.rowLength-1);
+		int colSpacing = getIntRandom(0,currentDie.rowLength-1);
 		left_edge += colSpacing;
-		left_edge %= currentDie.rowLength - 1;
+		left_edge %= currentDie.rowLength;
 		right_edge = left_edge + length;
 	}
 
@@ -309,7 +309,7 @@ SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
 			}
 			OutputCellLocateState(SA_contentPtr.ArrayInfo, SA_contentPtr.top_die, SA_contentPtr.bottom_die, SA_contentPtr.rawnet, SA_contentPtr.TechMenu, SA_contentPtr.PartitionResult, SA_contentPtr.InstanceArray);
 		}
-		Temperature = Temperature * alpha;
+		Temperature = Temperature * ALPHA;
 	}
 	fclose(costOUT);
 	return SA_contentPtr;
