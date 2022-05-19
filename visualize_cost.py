@@ -3,12 +3,17 @@ import numpy as np
 
 
 file = open("cost.out", 'r')
-cost = []
-for line in file:
-    cost.append(line)
+cost = file.readline().split(',')
 
-for i in range(0,len(cost)):
-    plt.plot(i,cost[i],'b.')
-plt.ylim(min(cost),max(cost))
+cost_max = -1
+
+plt.figure(figsize=(20, 6))
+for i in range(0,len(cost)-1):
+    if(int(cost[i]) > cost_max):
+        cost_max = int(cost[i])
+    plt.plot(i,int(cost[i]),color='b',marker='.',markersize=1)
+
+plt.title('cost when accept the M1 change')
+plt.ylim(0,cost_max*1.5)
 
 plt.savefig('cost.svg')

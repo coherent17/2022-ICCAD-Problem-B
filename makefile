@@ -21,7 +21,7 @@ $(BINS): src/main.cpp $(OBJS)
 do:
 	time ./main Benchmark/case1.txt
 	python3 visualize_placement.py
-	#python3 visualize_cost.py
+	python3 visualize_cost.py
 
 debug:
 	$(CHECKCC) $(CHECKFLAGS) ./main Benchmark/case1.txt

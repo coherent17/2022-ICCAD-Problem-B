@@ -263,9 +263,13 @@ SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
 
 	double Temperature = ANNEALING_TEMPERATURE;
 	SA_CONTENT new_SA_contentPtr;
+	int breakCount = 0;
 
 	while(Temperature > TERMINATE_TEMPERATURE){
+		int old_cost = 0;
+		int new_cost = 0;
 		for(int i = 0; i < INNER_LOOP_TIMES; i++){
+			if(breakCount >= INNER_LOOP_TIMES * 2) return SA_contentPtr;			//early return if converges
 			int moveFlag;
 			new_SA_contentPtr = Move1(SA_contentPtr, &moveFlag);
 			//printPlacementState(new_SA_contentPtr.top_die,0);
@@ -278,27 +282,25 @@ SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
 			}
 
 			if(moveFlag != -1){
-				int old_cost = Cost(SA_contentPtr);
-				int new_cost = Cost(new_SA_contentPtr);
+				old_cost = Cost(SA_contentPtr);
+				new_cost = Cost(new_SA_contentPtr);
+				if(old_cost == new_cost) breakCount++;
 				printf("old_cost = %d, new_cost = %d\n",old_cost, new_cost);
 				printf("at temperature = %f, INNER_LOOP_TIMES = %d\n", Temperature, i);
 
 				if(accept(new_cost, old_cost, Temperature)){
+
+					if(new_cost != old_cost) breakCount = 0;
 					printf("Accepted!\n");
-					fprintf(costOUT, "%d\n", new_cost);
 
 					if(moveFlag == 0){
 						SA_contentPtr.bottom_die = new_SA_contentPtr.bottom_die;
 						SA_contentPtr.ArrayInfo = new_SA_contentPtr.ArrayInfo;
-						//printPlacementState(SA_contentPtr.bottom_die,0);
-						//printArrayInfo(&SA_contentPtr.ArrayInfo);
 						printf("End\n\n");
 					}
 					else if(moveFlag == 1){
 						SA_contentPtr.top_die = new_SA_contentPtr.top_die;
 						SA_contentPtr.ArrayInfo = new_SA_contentPtr.ArrayInfo;
-						//printPlacementState(SA_contentPtr.top_die,0);
-						//printArrayInfo(&SA_contentPtr.ArrayInfo);
 						printf("End\n\n");
 					}
 				}
@@ -309,6 +311,7 @@ SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
 			}
 			OutputCellLocateState(SA_contentPtr.ArrayInfo, SA_contentPtr.top_die, SA_contentPtr.bottom_die, SA_contentPtr.rawnet, SA_contentPtr.TechMenu, SA_contentPtr.PartitionResult, SA_contentPtr.InstanceArray);
 		}
+		fprintf(costOUT, "%d,",old_cost);
 		Temperature = Temperature * ALPHA;
 	}
 	fclose(costOUT);
