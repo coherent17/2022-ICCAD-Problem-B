@@ -4,7 +4,7 @@
 #include <assert.h>
 #include "readfile.h"
 
-#define BUFFER_SIZE 15
+#define BUFFER_SIZE 25
 
 void read_one_blank_line(FILE *input){
     assert(input);
@@ -150,6 +150,7 @@ void readNetInfo(FILE *input, int *NumNets, vector <RawNet> &rawnet){
 
         for(int j = 0; j < temp.numPins; j++){
             char buffer[BUFFER_SIZE];
+            memset(buffer, '\0', BUFFER_SIZE);
             fscanf(input, "%*s %s", buffer);
             //divide the string by using delimiter "/"
             char *token = strtok(buffer, "/");

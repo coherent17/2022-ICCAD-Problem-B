@@ -17,7 +17,11 @@ def plot_rectangle(ax, x1, y1, x2, y2, c):
 def readFile():
    file = open("placement.txt", 'r')
 
-   fig, ax = plt.subplots(1,2, figsize = (20,6))
+
+   #using (20,6) for case1
+   #using (30,18) for case2
+   #using (45,24) for case3
+   fig, ax = plt.subplots(2,1, figsize = (45,24))
    bottom_repeatCount, bottom_rowLength, bottom_die_rowHeight = file.readline().split()
    bottom_repeatCount = int(bottom_repeatCount)
    bottom_rowLength = int(bottom_rowLength)
@@ -34,7 +38,7 @@ def readFile():
       left_edge = int(left_edge)
       right_edge = int(right_edge)
       plot_rectangle(ax[0], left_edge, rowID * bottom_die_rowHeight, right_edge + 1, (rowID + 1) * bottom_die_rowHeight,'k')
-      ax[0].text((left_edge + right_edge) / 2, (rowID + 0.5) * bottom_die_rowHeight, "C" + str(cellID + 1), fontsize = 20, color ="black") 
+      #ax[0].text((left_edge + right_edge) / 2, (rowID + 0.5) * bottom_die_rowHeight, "C" + str(cellID + 1), fontsize = 20, color ="black") 
 
 
    top_repeatCount, top_rowLength, top_die_rowHeight = file.readline().split()
@@ -53,37 +57,37 @@ def readFile():
       left_edge = int(left_edge)
       right_edge = int(right_edge)
       plot_rectangle(ax[1], left_edge, rowID * top_die_rowHeight, right_edge + 1, (rowID + 1) * top_die_rowHeight, 'k')
-      ax[1].text((left_edge + right_edge) / 2, (rowID + 0.5) * top_die_rowHeight, "C" + str(cellID + 1), fontsize = 20, color ="black") 
+      #ax[1].text((left_edge + right_edge) / 2, (rowID + 0.5) * top_die_rowHeight, "C" + str(cellID + 1), fontsize = 20, color ="black") 
 
 
    #plot the pin which connect to the same net
-   numNets = file.readline()
-   numNets = int(numNets)
+   # numNets = file.readline()
+   # numNets = int(numNets)
 
-   hexadecimal_alphabets = '0123456789ABCDEF'
-   color = ["#" + ''.join([random.choice(hexadecimal_alphabets) for j in range(6)]) for i in range(numNets)]
+   # hexadecimal_alphabets = '0123456789ABCDEF'
+   # color = ["#" + ''.join([random.choice(hexadecimal_alphabets) for j in range(6)]) for i in range(numNets)]
 
-   for i in range(0, numNets):
-      numPins = file.readline()
-      numPins = int(numPins)
-      for j in range(0, numPins):
-         x_cor, y_cor, comeFrom = file.readline().split()
-         x_cor = int(x_cor)
-         y_cor = int(y_cor)
-         comeFrom = int(comeFrom)
-         ax[comeFrom].plot(x_cor, y_cor, color = color[i], Marker = '*', MarkerSize = 10)
-         ax[(comeFrom+1 )% 2].plot(x_cor, y_cor, color = color[i], Marker = '*', MarkerSize = 10, alpha = 0.1)
+   # for i in range(0, numNets):
+   #    numPins = file.readline()
+   #    numPins = int(numPins)
+   #    for j in range(0, numPins):
+   #       x_cor, y_cor, comeFrom = file.readline().split()
+   #       x_cor = int(x_cor)
+   #       y_cor = int(y_cor)
+   #       comeFrom = int(comeFrom)
+   #       ax[comeFrom].plot(x_cor, y_cor, color = color[i], Marker = '*', MarkerSize = 10)
+   #       ax[(comeFrom+1 )% 2].plot(x_cor, y_cor, color = color[i], Marker = '*', MarkerSize = 10, alpha = 0.1)
 
 
    #plot the bbox
-   for i in range(0, numNets):
-      x_min, x_max, y_min, y_max = file.readline().split()
-      x_min = int(x_min)
-      x_max = int(x_max)
-      y_min = int(y_min)
-      y_max = int(y_max)
-      plot_rectangle(ax[0], x_min, y_min, x_max, y_max, color[i])
-      plot_rectangle(ax[1], x_min, y_min, x_max, y_max, color[i])
+   # for i in range(0, numNets):
+   #    x_min, x_max, y_min, y_max = file.readline().split()
+   #    x_min = int(x_min)
+   #    x_max = int(x_max)
+   #    y_min = int(y_min)
+   #    y_max = int(y_max)
+   #    plot_rectangle(ax[0], x_min, y_min, x_max, y_max, color[i])
+   #    plot_rectangle(ax[1], x_min, y_min, x_max, y_max, color[i])
 
 
    ax[0].grid(True, alpha = 0.3)
