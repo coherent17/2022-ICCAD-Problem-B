@@ -33,19 +33,19 @@ int main(int argc, char *argv[]){
 
 	//read file part
 	readTechnologyInfo(input, &NumTechnologies, TechMenu);	
-	//printTechnologyInfo(NumTechnologies, TechMenu);
+	printTechnologyInfo(NumTechnologies, TechMenu);
 	readDieInfo(input, &top_die, &bottom_die);
 	//printDieInfo(top_die, bottom_die);
 	readHybridTerminalInfo(input, &terminal);
 	//printHybridTerminalInfo(terminal);
 	readInstanceInfo(input, &NumInstances, InstanceArray);
-	//printInstanceInfo(NumInstances, InstanceArray);
+	printInstanceInfo(NumInstances, InstanceArray);
 	readNetInfo(input, &NumNets, rawnet);
 	//printNetInfo(NumNets, rawnet);
 
 
 	//partition part
-	OutputPartitionFormat(NumNets, NumInstances, rawnet);					//convert the rawnet into the file that can feed to shmetis to do partition
+	OutputPartitionFormat(NumNets, NumInstances, rawnet, TechMenu, InstanceArray, top_die, bottom_die);					//convert the rawnet into the file that can feed to shmetis to do partition
 	PartitionInstance();													//using shmetis to perform two way partition
 	ReadCutSize(&NumTerminal);									            //read cut size
 	ReadPartitionResult(&ArrayInfo, NumInstances, PartitionResult);			//store the partition result into cellarray in a
@@ -89,7 +89,7 @@ int main(int argc, char *argv[]){
 
 
 		//partition part
-		OutputPartitionFormat(NumNets, NumInstances, rawnet);
+		OutputPartitionFormat(NumNets, NumInstances, rawnet, TechMenu, InstanceArray, top_die, bottom_die);	
 		PartitionInstance();
 		ReadCutSize(&NumTerminal);
 		ReadPartitionResult(&ArrayInfo, NumInstances, PartitionResult);
@@ -113,7 +113,7 @@ int main(int argc, char *argv[]){
 
 
 
-	//Construct Simulate Annealing Content Struct:
+	// //Construct Simulate Annealing Content Struct:
 	SA_CONTENT SA_contentPtr;
 	SA_contentPtr.top_die = top_die;
 	SA_contentPtr.bottom_die = bottom_die;

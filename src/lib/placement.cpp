@@ -73,8 +73,8 @@ void InitializePlacement(Die *currentDie, TopBottomCellArray *ArrayInfo, int fla
     if(sucessful_placement_count == currentCellNumber) *PartitionAgain = false;
     printf("successful placement count: %d \n", sucessful_placement_count);
 
-    printf("MaxUtil of bottom die: %d Current Partition Util: %llu \n\n", currentDie->MaxUtil, usingCell *100/rowLength / currentDie->repeatCount);
-    if(usingCell * 100/currentDie->rowLength / currentDie->repeatCount > (unsigned long long int)currentDie->MaxUtil) *PartitionAgain = true;
+    printf("MaxUtil of bottom die: %d Current Partition Util: %d \n\n", currentDie->MaxUtil, int(usingCell *100/rowLength / currentDie->repeatCount));
+    if(int(usingCell * 100/currentDie->rowLength / currentDie->repeatCount) > currentDie->MaxUtil-1) *PartitionAgain = true;
 
     //pack data
     if(flag == 0){
@@ -138,6 +138,7 @@ void OutputCellLocateState(TopBottomCellArray ArrayInfo, Die top_die, Die bottom
             char buffer[INSTANCE_NAME_SIZE];
             memset(buffer,'\0',INSTANCE_NAME_SIZE);
             char PinName[PIN_NAME_SIZE];
+            memset(PinName, '\0', PIN_NAME_SIZE);
             strcpy(PinName, rawnet[i].Connection[j].libPinName);
             strncpy(buffer, &rawnet[i].Connection[j].instName[1], strlen(rawnet[i].Connection[j].instName)-1);
             int current_instance = atoi(buffer);
@@ -174,6 +175,13 @@ void OutputCellLocateState(TopBottomCellArray ArrayInfo, Die top_die, Die bottom
                                         x_max = (reference_left_edge + TechMenu[k].libcell[l].pinarray[m].pinLocationX) > x_max ? (reference_left_edge + TechMenu[k].libcell[l].pinarray[m].pinLocationX) : x_max ;
                                         y_min = (reference_row + TechMenu[k].libcell[l].pinarray[m].pinLocationY) < y_min ? (reference_row + TechMenu[k].libcell[l].pinarray[m].pinLocationY) : y_min;
                                         y_max = (reference_row + TechMenu[k].libcell[l].pinarray[m].pinLocationY) > y_max ? (reference_row + TechMenu[k].libcell[l].pinarray[m].pinLocationY) : y_max;
+                                        if(temp.x_cor >= reference_left_edge + ArrayInfo.BottomCellArray[index].right_edge - ArrayInfo.BottomCellArray[index].left_edge + 1){
+                                            // printf("\n%d\n", current_instance);
+                                            // printf("pinLocation: (%d,%d) \n", TechMenu[k].libcell[l].pinarray[m].pinLocationX, TechMenu[k].libcell[l].pinarray[m].pinLocationY);
+                                            // printf("%d %d\n", ArrayInfo.BottomCellArray[index].right_edge, ArrayInfo.BottomCellArray[index].left_edge);
+                                            // printf("libCellSizeX: %d\n", ArrayInfo.BottomCellArray[index].libCellSizeX);
+                                            // printf("cellID = %d\n", ArrayInfo.BottomCellArray[index].cellID);
+                                        }
                                     }
                                 }
                             }
@@ -211,6 +219,13 @@ void OutputCellLocateState(TopBottomCellArray ArrayInfo, Die top_die, Die bottom
                                         x_max = (reference_left_edge + TechMenu[k].libcell[l].pinarray[m].pinLocationX) > x_max ? (reference_left_edge + TechMenu[k].libcell[l].pinarray[m].pinLocationX) : x_max ;
                                         y_min = (reference_row + TechMenu[k].libcell[l].pinarray[m].pinLocationY) < y_min ? (reference_row + TechMenu[k].libcell[l].pinarray[m].pinLocationY) : y_min;
                                         y_max = (reference_row + TechMenu[k].libcell[l].pinarray[m].pinLocationY) > y_max ? (reference_row + TechMenu[k].libcell[l].pinarray[m].pinLocationY) : y_max;
+                                        if(temp.x_cor >= reference_left_edge + ArrayInfo.TopCellArray[index].right_edge - ArrayInfo.TopCellArray[index].left_edge + 1){
+                                            // printf("\n%d\n", current_instance);
+                                            // printf("pinLocation: (%d,%d) \n", TechMenu[k].libcell[l].pinarray[m].pinLocationX, TechMenu[k].libcell[l].pinarray[m].pinLocationY);
+                                            // printf("%d %d\n", ArrayInfo.TopCellArray[index].right_edge, ArrayInfo.TopCellArray[index].left_edge);
+                                            // printf("libCellSizeX: %d\n", ArrayInfo.TopCellArray[index].libCellSizeX);
+                                            // printf("cellID = %d\n", ArrayInfo.TopCellArray[index].cellID);
+                                        }
                                     }
                                 }
                             }

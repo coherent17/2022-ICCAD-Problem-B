@@ -6,11 +6,11 @@ using std::vector;
 #ifndef _READFILE_H_
 #define _READFILE_H_
 
-#define TECH_NAME_SIZE 10
-#define PIN_NAME_SIZE 10
-#define LIBCELL_NAME_SIZE 10
-#define INSTANCE_NAME_SIZE 10
-#define NET_NAME_SIZE 10
+#define TECH_NAME_SIZE 20
+#define PIN_NAME_SIZE 20
+#define LIBCELL_NAME_SIZE 20
+#define INSTANCE_NAME_SIZE 20
+#define NET_NAME_SIZE 20
 
 typedef struct _pin{
     char pinName[PIN_NAME_SIZE]; //P1, P2, ...

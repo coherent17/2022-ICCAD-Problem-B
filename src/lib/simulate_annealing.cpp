@@ -176,7 +176,7 @@ SA_CONTENT Move1(SA_CONTENT SA_contentPtr, int *moveFlag){
 			listCount++;
 			if(listCount == 5) break;
 		}
-		int colSpacing = getIntRandom(0,currentDie.rowLength-1);
+		int colSpacing = getIntRandom(0,currentDie.rowLength-1-length);
 		left_edge += colSpacing;
 		left_edge %= currentDie.rowLength;
 		right_edge = left_edge + length;
@@ -269,7 +269,7 @@ SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
 		int old_cost = 0;
 		int new_cost = 0;
 		for(int i = 0; i < INNER_LOOP_TIMES; i++){
-			if(breakCount >= INNER_LOOP_TIMES * 2) return SA_contentPtr;			//early return if converges
+			if(breakCount >= INNER_LOOP_TIMES * 20) return SA_contentPtr;			//early return if converges
 			int moveFlag;
 			new_SA_contentPtr = Move1(SA_contentPtr, &moveFlag);
 			//printPlacementState(new_SA_contentPtr.top_die,0);
@@ -312,7 +312,7 @@ SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
 			OutputCellLocateState(SA_contentPtr.ArrayInfo, SA_contentPtr.top_die, SA_contentPtr.bottom_die, SA_contentPtr.rawnet, SA_contentPtr.TechMenu, SA_contentPtr.PartitionResult, SA_contentPtr.InstanceArray);
 		}
 		fprintf(costOUT, "%d,",old_cost);
-		Temperature = Temperature * ALPHA;
+		Temperature = (Temperature > 1) ? Temperature * 0.1 : Temperature * 0.95;
 	}
 	fclose(costOUT);
 	return SA_contentPtr;
