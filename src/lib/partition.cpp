@@ -5,9 +5,10 @@
 #include "partition.h"
 #include "readfile.h"
 
-#define TEMP_BUFFER_SIZE 10
+#define TEMP_BUFFER_SIZE 25
 #define WORD_BUFFER_SIZE 1000
-void OutputPartitionFormat(int NumNets, int NumInstances, vector <RawNet> rawnet){
+
+void OutputPartitionFormat(int NumNets, int NumInstances, vector <RawNet> rawnet, vector <Tech_menu> TechMenu, vector <Instance> InstanceArray, Die top_die, Die bottom_die){
 	FILE *shmetisInput = fopen("Netlist.hgr", "w");
 	fprintf(shmetisInput, "%d %d\n", NumNets, NumInstances);
 
@@ -20,13 +21,32 @@ void OutputPartitionFormat(int NumNets, int NumInstances, vector <RawNet> rawnet
 		}
 		fprintf(shmetisInput, "\n");
 	}
+
+	//start to ouput the weighted vertex
+	// for(int i = 0; i < NumInstances; i++){
+	// 	int weight = 0;
+	// 	char buffer[LIBCELL_NAME_SIZE];
+	// 	memset(buffer, '\0', sizeof(buffer));
+	// 	strncpy(buffer, InstanceArray[i].libCellName+2, strlen(InstanceArray[i].libCellName)-2);
+
+
+	// 	for(int j = 0; j < (int)TechMenu.size(); j++){
+	// 		if(strcmp(TechMenu[j].tech, bottom_die.tech)==0){
+	// 			weight += (int)TechMenu[j].libcell[atoi(buffer)-1].libCellSizeX / bottom_die.repeatCount;
+	// 		}
+	// 		else{
+	// 			weight += (int)TechMenu[j].libcell[atoi(buffer)-1].libCellSizeX / top_die.repeatCount;
+	// 		}
+	// 	}
+	// 	fprintf(shmetisInput, "%d\n", weight);
+	// }
 	fclose(shmetisInput);
 }
 
 //using shmetis to do 2-way partition and redirect the output stream to log.txt
 void PartitionInstance(){
 	system("chmod +x src/hmetis/shmetis");
-	system("./src/hmetis/shmetis Netlist.hgr 2 5 > log.txt");
+	system("./src/hmetis/shmetis Netlist.hgr 2 25 > log.txt");
 
 	//what if the partition result still can't have a valid placement?
 	//change unblanced factor?
@@ -81,7 +101,7 @@ void ReadPartitionResult(TopBottomCellArray *ArrayInfo, int NumInstances, vector
 	(*ArrayInfo).TopCellNumber = TopCellCount;
 
 	fclose(shmetisResult);
-	system("rm -rf Netlist.hgr Netlist.hgr.part.2");
+	//system("rm -rf Netlist.hgr Netlist.hgr.part.2");
 }
 
 //After partition, update the instanceArray.tech 
@@ -194,49 +214,48 @@ void GetNetOfCell(vector <Net> NetArray, TopBottomCellArray *ArrayInfo, vector <
 }
 
 
+
 void getSizeOfCellArray(TopBottomCellArray *ArrayInfo, vector <Tech_menu> TechMenu, Die top_die, Die bottom_die, vector <Instance> InstanceArray){	
+	
 	//start from bottomDie
 	char bottomTech[TECH_NAME_SIZE];
+	memset(bottomTech, '\0', TECH_NAME_SIZE);
 	strncpy(bottomTech, bottom_die.tech, strlen(bottom_die.tech));
 	for(int i = 0; i < ArrayInfo->BottomCellNumber; i++){
 		//get current libcellname from instance array
 		char current_libCellName[LIBCELL_NAME_SIZE];
 		memset(current_libCellName,'\0', LIBCELL_NAME_SIZE);
-		strncpy(current_libCellName, InstanceArray[ArrayInfo->BottomCellArray[i].cellID].libCellName, strlen(InstanceArray[ArrayInfo->BottomCellArray[i].cellID].libCellName));
-		//find the correct techMenu (TA, TB)
+
+
+		strncpy(current_libCellName, InstanceArray[ArrayInfo->BottomCellArray[i].cellID].libCellName+2, strlen(InstanceArray[ArrayInfo->BottomCellArray[i].cellID].libCellName)-2);
+
 		for(int j = 0; j < (int)TechMenu.size(); j++){
-			if(strncmp(TechMenu[j].tech, bottomTech, strlen(TechMenu[j].tech)) == 0){
-				//find the correct libcell
-				for(int k = 0; k < TechMenu[j].libcell_count; k++){
-					if(strncmp(current_libCellName,TechMenu[j].libcell[k].libCellName, strlen(TechMenu[j].libcell[k].libCellName)) == 0){
-						ArrayInfo->BottomCellArray[i].libCellSizeX = TechMenu[j].libcell[k].libCellSizeX;
-						ArrayInfo->BottomCellArray[i].libCellSizeY = TechMenu[j].libcell[k].libCellSizeY;
-						break;
-					}
-				}
+			if(strncmp(TechMenu[j].tech, bottomTech, strlen(bottomTech)) == 0){
+				// printf("%s\n", current_libCellName);
+				// printf("%d\n", atoi(current_libCellName));
+				ArrayInfo->BottomCellArray[i].libCellSizeX = TechMenu[j].libcell[atoi(current_libCellName)-1].libCellSizeX;
+				ArrayInfo->BottomCellArray[i].libCellSizeY = TechMenu[j].libcell[atoi(current_libCellName)-1].libCellSizeY;
 			}
 		}
 	}
 
-	//topDie
+	//start from topDie
 	char topTech[TECH_NAME_SIZE];
+	memset(topTech, '\0', TECH_NAME_SIZE);
 	strncpy(topTech, top_die.tech, strlen(top_die.tech));
 	for(int i = 0; i < ArrayInfo->TopCellNumber; i++){
 		//get current libcellname from instance array
 		char current_libCellName[LIBCELL_NAME_SIZE];
 		memset(current_libCellName,'\0', LIBCELL_NAME_SIZE);
-		strncpy(current_libCellName, InstanceArray[ArrayInfo->TopCellArray[i].cellID].libCellName, strlen(InstanceArray[ArrayInfo->TopCellArray[i].cellID].libCellName));
-		//find the correct techMenu (TA, TB)
+
+		strncpy(current_libCellName, InstanceArray[ArrayInfo->TopCellArray[i].cellID].libCellName+2, strlen(InstanceArray[ArrayInfo->TopCellArray[i].cellID].libCellName)-2);
+
 		for(int j = 0; j < (int)TechMenu.size(); j++){
-			if(strncmp(TechMenu[j].tech, topTech, strlen(TechMenu[j].tech)) == 0){
-				//find the correct libcell
-				for(int k = 0; k < TechMenu[j].libcell_count; k++){
-					if(strncmp(current_libCellName,TechMenu[j].libcell[k].libCellName, strlen(TechMenu[j].libcell[k].libCellName))==0){
-						ArrayInfo->TopCellArray[i].libCellSizeX = TechMenu[j].libcell[k].libCellSizeX;
-						ArrayInfo->TopCellArray[i].libCellSizeY = TechMenu[j].libcell[k].libCellSizeY;
-						break;
-					}
-				}
+			if(strncmp(TechMenu[j].tech, topTech, strlen(topTech)) == 0){
+				// printf("%s\n", current_libCellName);
+				// printf("%d\n", atoi(current_libCellName));
+				ArrayInfo->TopCellArray[i].libCellSizeX = TechMenu[j].libcell[atoi(current_libCellName)-1].libCellSizeX;
+				ArrayInfo->TopCellArray[i].libCellSizeY = TechMenu[j].libcell[atoi(current_libCellName)-1].libCellSizeY;
 			}
 		}
 	}
