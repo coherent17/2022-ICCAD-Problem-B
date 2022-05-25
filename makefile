@@ -18,13 +18,28 @@ all: $(BINS)
 $(BINS): src/main.cpp $(OBJS)
 	$(CC) $(CFLAGS)  $^ -o $@
 
-do:
+do1:
+	time ./main Benchmark/case1.txt
+	python3 visualize_placement.py
+	python3 visualize_cost.py
+
+do2:
+	time ./main Benchmark/case2.txt
+	python3 visualize_placement.py
+	python3 visualize_cost.py
+
+do3:
 	time ./main Benchmark/case3.txt
 	python3 visualize_placement.py
 	python3 visualize_cost.py
 
+do4:
+	time ./main Benchmark/case4.txt
+	python3 visualize_placement.py
+	python3 visualize_cost.py
+
 debug:
-	$(CHECKCC) $(CHECKFLAGS) ./main Benchmark/case4.txt
+	$(CHECKCC) $(CHECKFLAGS) ./main Benchmark/case2.txt
 	#python3 visualize_placement.py
 	#python3 visualize_cost.py
 
