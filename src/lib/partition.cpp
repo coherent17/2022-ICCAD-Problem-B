@@ -44,9 +44,11 @@ void OutputPartitionFormat(int NumNets, int NumInstances, vector <RawNet> rawnet
 }
 
 //using shmetis to do 2-way partition and redirect the output stream to log.txt
-void PartitionInstance(){
+void PartitionInstance(int UBfactor){
 	system("chmod +x src/hmetis/shmetis");
-	system("./src/hmetis/shmetis Netlist.hgr 2 25 > log.txt");
+	char command[100];
+	sprintf(command,"./src/hmetis/shmetis Netlist.hgr 2 %d > log.txt", UBfactor);
+	system(command);
 
 	//what if the partition result still can't have a valid placement?
 	//change unblanced factor?
@@ -70,6 +72,8 @@ void ReadCutSize(int *NumTerminal){
 	}
 	system("rm -rf log.txt");
 }
+
+
 void ReadPartitionResult(TopBottomCellArray *ArrayInfo, int NumInstances, vector <int> &PartitionResult){
 	FILE *shmetisResult = fopen("Netlist.hgr.part.2", "r");
 	int BottomCellCount = 0;
@@ -101,7 +105,7 @@ void ReadPartitionResult(TopBottomCellArray *ArrayInfo, int NumInstances, vector
 	(*ArrayInfo).TopCellNumber = TopCellCount;
 
 	fclose(shmetisResult);
-	//system("rm -rf Netlist.hgr Netlist.hgr.part.2");
+	system("rm -rf Netlist.hgr Netlist.hgr.part.2");
 }
 
 //After partition, update the instanceArray.tech 
@@ -225,14 +229,10 @@ void getSizeOfCellArray(TopBottomCellArray *ArrayInfo, vector <Tech_menu> TechMe
 		//get current libcellname from instance array
 		char current_libCellName[LIBCELL_NAME_SIZE];
 		memset(current_libCellName,'\0', LIBCELL_NAME_SIZE);
-
-
 		strncpy(current_libCellName, InstanceArray[ArrayInfo->BottomCellArray[i].cellID].libCellName+2, strlen(InstanceArray[ArrayInfo->BottomCellArray[i].cellID].libCellName)-2);
 
 		for(int j = 0; j < (int)TechMenu.size(); j++){
 			if(strncmp(TechMenu[j].tech, bottomTech, strlen(bottomTech)) == 0){
-				// printf("%s\n", current_libCellName);
-				// printf("%d\n", atoi(current_libCellName));
 				ArrayInfo->BottomCellArray[i].libCellSizeX = TechMenu[j].libcell[atoi(current_libCellName)-1].libCellSizeX;
 				ArrayInfo->BottomCellArray[i].libCellSizeY = TechMenu[j].libcell[atoi(current_libCellName)-1].libCellSizeY;
 			}
@@ -247,13 +247,10 @@ void getSizeOfCellArray(TopBottomCellArray *ArrayInfo, vector <Tech_menu> TechMe
 		//get current libcellname from instance array
 		char current_libCellName[LIBCELL_NAME_SIZE];
 		memset(current_libCellName,'\0', LIBCELL_NAME_SIZE);
-
 		strncpy(current_libCellName, InstanceArray[ArrayInfo->TopCellArray[i].cellID].libCellName+2, strlen(InstanceArray[ArrayInfo->TopCellArray[i].cellID].libCellName)-2);
 
 		for(int j = 0; j < (int)TechMenu.size(); j++){
 			if(strncmp(TechMenu[j].tech, topTech, strlen(topTech)) == 0){
-				// printf("%s\n", current_libCellName);
-				// printf("%d\n", atoi(current_libCellName));
 				ArrayInfo->TopCellArray[i].libCellSizeX = TechMenu[j].libcell[atoi(current_libCellName)-1].libCellSizeX;
 				ArrayInfo->TopCellArray[i].libCellSizeY = TechMenu[j].libcell[atoi(current_libCellName)-1].libCellSizeY;
 			}
