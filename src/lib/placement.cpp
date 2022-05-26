@@ -26,11 +26,11 @@ void fillSegment(vector <vector <int>> &PlacementState, int row, int left_pointe
 //if flag = 0, place the bottom die, if flag = 1, place the top die
 void InitializePlacement(Die *currentDie, TopBottomCellArray *ArrayInfo, int flag, bool *PartitionAgain){
     *PartitionAgain = true;
-    unsigned long long int usingCell = 0;
-    vector <vector <int>> PlacementState(currentDie->repeatCount,vector <int>(currentDie->rowLength,EMPTY_STATE));
-    int sucessful_placement_count = 0;
     int currentCellNumber = 0;
     vector <Cell> currentCellArray;
+
+    //calculate the sum of the cells' size
+
     if(flag == 0){
         currentCellNumber = (*ArrayInfo).BottomCellNumber;
         currentCellArray = (*ArrayInfo).BottomCellArray;
@@ -43,9 +43,27 @@ void InitializePlacement(Die *currentDie, TopBottomCellArray *ArrayInfo, int fla
         assert(flag!=0 || flag!=1);
     }
 
+    unsigned long long int SumOfCellLength = 0;
+    unsigned long long int MaxLength = (currentDie->rowLength * currentDie->repeatCount) * currentDie->MaxUtil / 100;
+
+    for(int i=0; i < currentCellNumber; i++){
+        SumOfCellLength += currentCellArray[i].libCellSizeX;
+    }
+
+    if( SumOfCellLength >= MaxLength - 1){
+        if(flag==0) printf("Bottom Die: Violate the MaxUtil -> Partition again!\n");
+        else printf("Top Die: Violate the MaxUtil -> Partition again!\n");
+        printf("MaxUtil of current die: %d Current Partition Util: %d \n\n", currentDie->MaxUtil, int(100 * SumOfCellLength / (currentDie->rowLength * currentDie->repeatCount)));
+        return;
+    }
+
+    unsigned long long int usingCell = 0;
+    vector <vector <int>> PlacementState(currentDie->repeatCount,vector <int>(currentDie->rowLength,EMPTY_STATE));
+    int sucessful_placement_count = 0;
+
     //linear probing 
     int currentRow = 0;
-    int left_edge = currentDie->startX;
+    int left_edge = 0;
     int right_edge;
     int rowLength = currentDie->rowLength;
     vector <int> NewLeftEdgeArray(currentDie->repeatCount,0);
@@ -71,9 +89,7 @@ void InitializePlacement(Die *currentDie, TopBottomCellArray *ArrayInfo, int fla
     }
 
     if(sucessful_placement_count == currentCellNumber) *PartitionAgain = false;
-    printf("successful placement count: %d \n", sucessful_placement_count);
-
-    printf("MaxUtil of bottom die: %d Current Partition Util: %d \n\n", currentDie->MaxUtil, int(usingCell *100/rowLength / currentDie->repeatCount));
+    printf("MaxUtil of current die: %d Current Partition Util: %d \n\n", currentDie->MaxUtil, int(usingCell *100/rowLength / currentDie->repeatCount));
     if(int(usingCell * 100/currentDie->rowLength / currentDie->repeatCount) > currentDie->MaxUtil-1) *PartitionAgain = true;
 
     //pack data

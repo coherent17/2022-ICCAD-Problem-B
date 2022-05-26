@@ -34,7 +34,7 @@ typedef struct _TopBottomCellArray{
 } TopBottomCellArray;
 
 void OutputPartitionFormat(int NumNets, int NumInstances, vector <RawNet> rawnet, vector <Tech_menu> TechMenu, vector <Instance> InstanceArray, Die top_die, Die bottom_die);
-void PartitionInstance();
+void PartitionInstance(int UBfactor);
 void ReadCutSize(int *NumTerminal);
 void ReadPartitionResult(TopBottomCellArray *ArrayInfo, int NumInstances, vector <int> &PartitionResult);
 void UpdateInstanceArray(vector <Instance> &InstanceArray, vector <int> PartitionResult, Die top_die, Die bottom_die);

@@ -46,7 +46,7 @@ int main(int argc, char *argv[]){
 
 	//partition part
 	OutputPartitionFormat(NumNets, NumInstances, rawnet, TechMenu, InstanceArray, top_die, bottom_die);					//convert the rawnet into the file that can feed to shmetis to do partition
-	PartitionInstance();													//using shmetis to perform two way partition
+	PartitionInstance(5);													//using shmetis to perform two way partition
 	ReadCutSize(&NumTerminal);									            //read cut size
 	ReadPartitionResult(&ArrayInfo, NumInstances, PartitionResult);			//store the partition result into cellarray in a
 	UpdateInstanceArray(InstanceArray, PartitionResult, top_die, bottom_die);
@@ -66,12 +66,14 @@ int main(int argc, char *argv[]){
 	bool TopPartitionAgain;
 	InitializePlacement(&bottom_die, &ArrayInfo, 0, &BottomPartitionAgain);
 	//printPlacementState(bottom_die, BottomPartitionAgain);
-	InitializePlacement(&top_die, &ArrayInfo, 1, &TopPartitionAgain);
-	//printPlacementState(top_die, TopPartitionAgain);
-
+	if(BottomPartitionAgain == false){
+		InitializePlacement(&top_die, &ArrayInfo, 1, &TopPartitionAgain);
+		//printPlacementState(top_die, TopPartitionAgain);
+	}
 
 	//repartition if the current can't have a legal placement
 	int repartitionCount = 0;
+	int UBfactor = 5;
 	while(BottomPartitionAgain == true || TopPartitionAgain == true){
 		repartitionCount++;
 
@@ -90,7 +92,7 @@ int main(int argc, char *argv[]){
 
 		//partition part
 		OutputPartitionFormat(NumNets, NumInstances, rawnet, TechMenu, InstanceArray, top_die, bottom_die);	
-		PartitionInstance();
+		PartitionInstance(UBfactor);
 		ReadCutSize(&NumTerminal);
 		ReadPartitionResult(&ArrayInfo, NumInstances, PartitionResult);
 		UpdateInstanceArray(InstanceArray, PartitionResult, top_die, bottom_die);
@@ -105,11 +107,15 @@ int main(int argc, char *argv[]){
 
 		InitializePlacement(&bottom_die, &ArrayInfo, 0, &BottomPartitionAgain);
 		//printPlacementState(bottom_die, BottomPartitionAgain);
-		InitializePlacement(&top_die, &ArrayInfo, 1, &TopPartitionAgain);
-		//printPlacementState(top_die, TopPartitionAgain);
+		if(BottomPartitionAgain == false){
+			InitializePlacement(&top_die, &ArrayInfo, 1, &TopPartitionAgain);
+			//printPlacementState(top_die, TopPartitionAgain);
+		}
+		if(repartitionCount % 50 == 0) UBfactor += 3;
+		UBfactor = UBfactor % 35 + 1; 
 	}
 	printf("repartition %d times\n", repartitionCount);
-	//OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
+	OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
 
 
 
@@ -127,6 +133,6 @@ int main(int argc, char *argv[]){
 	top_die = SA_contentPtr.top_die;
 	bottom_die = SA_contentPtr.bottom_die;
 	ArrayInfo = SA_contentPtr.ArrayInfo;
-	OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
+	//OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
 	return 0;
 }
