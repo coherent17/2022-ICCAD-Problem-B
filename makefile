@@ -19,7 +19,7 @@ $(BINS): src/main.cpp $(OBJS)
 	$(CC) $(CFLAGS)  $^ -o $@
 
 do1:
-	time ./main Benchmark/case1.txt
+	time ./main Benchmark/case1.txt case1.out
 	python3 visualize_placement.py
 	python3 visualize_cost.py
 

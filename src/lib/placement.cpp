@@ -296,3 +296,19 @@ void printArrayInfo(TopBottomCellArray *ArrayInfo){
         printf("\n");
     }
 }
+
+void outputAnswer(char *filename, TopBottomCellArray ArrayInfo, Die top_die, Die bottom_die){
+    FILE *out = fopen(filename, "w");
+    fprintf(out, "TopDiePlacement %d\n", ArrayInfo.TopCellNumber);
+    for(int i = 0; i < ArrayInfo.TopCellNumber; i++){
+        fprintf(out, "Inst C%d %d %d\n", ArrayInfo.TopCellArray[i].cellID, ArrayInfo.TopCellArray[i].left_edge, ArrayInfo.TopCellArray[i].rowID * top_die.rowHeight);
+    }
+
+    fprintf(out, "BottomDiePlacement %d\n", ArrayInfo.BottomCellNumber);
+    for(int i = 0; i < ArrayInfo.BottomCellNumber; i++){
+        fprintf(out, "Inst C%d %d %d\n", ArrayInfo.BottomCellArray[i].cellID, ArrayInfo.BottomCellArray[i].left_edge, ArrayInfo.BottomCellArray[i].rowID * bottom_die.rowHeight);
+    }
+
+    fprintf(out, "NumTerminals 1\n");
+    fclose(out);
+}

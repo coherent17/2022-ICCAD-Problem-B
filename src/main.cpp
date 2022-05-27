@@ -13,6 +13,7 @@ using std::vector;
 
 int main(int argc, char *argv[]){
 	char *inputName = *(argv + 1);
+	char *outputName = *(argv + 2);
 	FILE *input = fopen(inputName, "r");
 	assert(input);
 
@@ -133,6 +134,7 @@ int main(int argc, char *argv[]){
 	top_die = SA_contentPtr.top_die;
 	bottom_die = SA_contentPtr.bottom_die;
 	ArrayInfo = SA_contentPtr.ArrayInfo;
-	//OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
+	OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
+	outputAnswer(outputName, ArrayInfo, top_die, bottom_die);
 	return 0;
 }
