@@ -144,7 +144,7 @@ void printPartitionResult(TopBottomCellArray ArrayInfo, vector <Instance> Instan
 	}
 }
 
-void GetCellOfNet(vector <RawNet> rawnet, vector <Net> &NetArray, int NumNets){
+void GetCellOfNet(vector <RawNet> rawnet, vector <Net> &NetArray, int NumNets, vector <int> PartitionResult){
 	Net tempNet;
 	for(int i=0; i<NumNets; i++){
 		vector <int> temp_cells;
@@ -158,6 +158,16 @@ void GetCellOfNet(vector <RawNet> rawnet, vector <Net> &NetArray, int NumNets){
 		tempNet.cells = temp_cells;
 		tempNet.CellNumber = rawnet[i].numPins;
 		tempNet.NetID = i;
+
+		//calculate whether there exist hybrid bond terminal
+		tempNet.hasHybridTerminal = false;
+		int first_cell_partition = PartitionResult[temp_cells[0]];
+		for(int j = 1; j < (int)temp_cells.size(); j++){
+			if(PartitionResult[temp_cells[j]] != first_cell_partition){
+				tempNet.hasHybridTerminal = true;
+				break;
+			}
+		}
 		NetArray.emplace_back(tempNet);
 	}
 }
@@ -170,6 +180,8 @@ void PrintNetArray(vector <Net> NetArray, int NumNets){
 			printf("%d ", NetArray[i].cells[j]);
 		}
 		printf("\n");
+
+		if(NetArray[i].hasHybridTerminal) printf("There exists hasHybridTerminal in this net.\n");
 	}
 }
 
@@ -203,7 +215,6 @@ void GetNetOfCell(vector <Net> NetArray, TopBottomCellArray *ArrayInfo, vector <
 	}
 
 
-	//dry-wet seperation
 	for(int i=0; i<(int)PartitionResult.size(); i++){
 		if( PartitionResult[i] == 0){
 			ArrayInfo->BottomCellArray[PartitionIndexResult[i]].netsNumber = temp_netsNumber[i];

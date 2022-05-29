@@ -10,7 +10,8 @@ using std::vector;
 typedef struct netStruct{
 	int CellNumber;      			//cell number included
 	vector <int> cells;  			//list of cell included in this nell
-	int NetID;            			
+	int NetID;
+	bool hasHybridTerminal;            			
 } Net;
 
 typedef struct cellStruct{
@@ -39,7 +40,7 @@ void ReadCutSize(int *NumTerminal);
 void ReadPartitionResult(TopBottomCellArray *ArrayInfo, int NumInstances, vector <int> &PartitionResult);
 void UpdateInstanceArray(vector <Instance> &InstanceArray, vector <int> PartitionResult, Die top_die, Die bottom_die);
 void printPartitionResult(TopBottomCellArray ArrayInfo, vector <Instance> InstanceArray, vector <int> PartitionResult);
-void GetCellOfNet(vector <RawNet> rawnet, vector <Net> &NetArray, int NumNets);
+void GetCellOfNet(vector <RawNet> rawnet, vector <Net> &NetArray, int NumNets, vector <int> PartitionResult);
 void PrintNetArray(vector <Net> NetArray, int NumNets);
 void GetNetOfCell(vector <Net> NetArray, TopBottomCellArray *ArrayInfo, vector <int> PartitionResult);
 void getSizeOfCellArray(TopBottomCellArray *ArrayInfo, vector <Tech_menu> TechMenu, Die top_die, Die bottom_die, vector <Instance> InstanceArray);

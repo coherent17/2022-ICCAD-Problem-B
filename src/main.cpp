@@ -51,15 +51,15 @@ int main(int argc, char *argv[]){
 	ReadCutSize(&NumTerminal);									            //read cut size
 	ReadPartitionResult(&ArrayInfo, NumInstances, PartitionResult);			//store the partition result into cellarray in a
 	UpdateInstanceArray(InstanceArray, PartitionResult, top_die, bottom_die);
-	//printPartitionResult(ArrayInfo, InstanceArray, PartitionResult);
+	printPartitionResult(ArrayInfo, InstanceArray, PartitionResult);
 
 
 	//create netarray and cellarray
-	GetCellOfNet(rawnet, NetArray, NumNets);
-	//PrintNetArray(NetArray, NumNets);
+	GetCellOfNet(rawnet, NetArray, NumNets, PartitionResult);
+	PrintNetArray(NetArray, NumNets);
 	GetNetOfCell(NetArray, &ArrayInfo, PartitionResult);
 	getSizeOfCellArray(&ArrayInfo, TechMenu, top_die, bottom_die, InstanceArray);
-	//printTopBottomCellArray(&ArrayInfo, PartitionResult);
+	printTopBottomCellArray(&ArrayInfo, PartitionResult);
 
 
 	//initial placement
@@ -97,14 +97,15 @@ int main(int argc, char *argv[]){
 		ReadCutSize(&NumTerminal);
 		ReadPartitionResult(&ArrayInfo, NumInstances, PartitionResult);
 		UpdateInstanceArray(InstanceArray, PartitionResult, top_die, bottom_die);
-		//printPartitionResult(ArrayInfo, InstanceArray, PartitionResult);
+		printPartitionResult(ArrayInfo, InstanceArray, PartitionResult);
 
 
 		//create netarray and cellarray
-		//PrintNetArray(NetArray, NumNets);
+		GetCellOfNet(rawnet, NetArray, NumNets, PartitionResult);
+		PrintNetArray(NetArray, NumNets);
 		GetNetOfCell(NetArray, &ArrayInfo, PartitionResult);
 		getSizeOfCellArray(&ArrayInfo, TechMenu, top_die, bottom_die, InstanceArray);
-		//printTopBottomCellArray(&ArrayInfo, PartitionResult);
+		printTopBottomCellArray(&ArrayInfo, PartitionResult);
 
 		InitializePlacement(&bottom_die, &ArrayInfo, 0, &BottomPartitionAgain);
 		//printPlacementState(bottom_die, BottomPartitionAgain);
@@ -120,7 +121,7 @@ int main(int argc, char *argv[]){
 
 
 
-	// //Construct Simulate Annealing Content Struct:
+	//Construct Simulate Annealing Content Struct:
 	SA_CONTENT SA_contentPtr;
 	SA_contentPtr.top_die = top_die;
 	SA_contentPtr.bottom_die = bottom_die;
