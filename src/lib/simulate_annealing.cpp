@@ -53,7 +53,7 @@ int Cost(SA_CONTENT SA_contentPtr){
             memset(buffer,'\0',INSTANCE_NAME_SIZE);
             char PinName[PIN_NAME_SIZE];
             memset(PinName,'\0',PIN_NAME_SIZE);
-            strcpy(PinName, rawnet[i].Connection[j].libPinName);
+            strncpy(PinName, &rawnet[i].Connection[j].libPinName[1], strlen(rawnet[i].Connection[j].libPinName)-1);
             strncpy(buffer, &rawnet[i].Connection[j].instName[1], strlen(rawnet[i].Connection[j].instName)-1);
             int current_instance = atoi(buffer);
 
@@ -71,32 +71,24 @@ int Cost(SA_CONTENT SA_contentPtr){
                 reference_left_edge = ArrayInfo.BottomCellArray[index].left_edge;
                 reference_row = ArrayInfo.BottomCellArray[index].rowID * bottom_die.rowHeight;
                 strcpy(current_tech, bottom_die.tech);
-                strcpy(libCellName, InstanceArray[current_instance-1].libCellName);
+                strncpy(libCellName, &InstanceArray[current_instance-1].libCellName[2], strlen(InstanceArray[current_instance-1].libCellName)-2);
             }
 
             else if(current_instance_partition == 1){
                 reference_left_edge = ArrayInfo.TopCellArray[index].left_edge;
                 reference_row = ArrayInfo.TopCellArray[index].rowID * top_die.rowHeight;
                 strcpy(current_tech, top_die.tech);
-                strcpy(libCellName, InstanceArray[current_instance-1].libCellName);
+                strncpy(libCellName, &InstanceArray[current_instance-1].libCellName[2], strlen(InstanceArray[current_instance-1].libCellName)-2);
             }
 
             for(int k=0; k < (int)TechMenu.size(); k++){
                 if(strcmp(current_tech, TechMenu[k].tech) == 0){
-                    for(int l=0; l < (int)TechMenu[k].libcell.size(); l++){
-                        if(strcmp(libCellName,TechMenu[k].libcell[l].libCellName) == 0){
-                            for(int m=0; m < (int)TechMenu[k].libcell[l].pinarray.size(); m++){
-                                if(strcmp(PinName, TechMenu[k].libcell[l].pinarray[m].pinName) == 0){
-                                    x_min = (reference_left_edge + TechMenu[k].libcell[l].pinarray[m].pinLocationX) < x_min ? (reference_left_edge + TechMenu[k].libcell[l].pinarray[m].pinLocationX) : x_min ;
-                                    x_max = (reference_left_edge + TechMenu[k].libcell[l].pinarray[m].pinLocationX) > x_max ? (reference_left_edge + TechMenu[k].libcell[l].pinarray[m].pinLocationX) : x_max ;
-                                    y_min = (reference_row + TechMenu[k].libcell[l].pinarray[m].pinLocationY) < y_min ? (reference_row + TechMenu[k].libcell[l].pinarray[m].pinLocationY) : y_min;
-                                    y_max = (reference_row + TechMenu[k].libcell[l].pinarray[m].pinLocationY) > y_max ? (reference_row + TechMenu[k].libcell[l].pinarray[m].pinLocationY) : y_max;
-                                }
-                            }
-                        }
-                    }
+                	x_min = (reference_left_edge + TechMenu[k].libcell[atoi(libCellName)-1].pinarray[atoi(PinName)-1].pinLocationX) < x_min ? (reference_left_edge + TechMenu[k].libcell[atoi(libCellName)-1].pinarray[atoi(PinName)-1].pinLocationX) : x_min ;
+                	x_max = (reference_left_edge + TechMenu[k].libcell[atoi(libCellName)-1].pinarray[atoi(PinName)-1].pinLocationX) > x_max ? (reference_left_edge + TechMenu[k].libcell[atoi(libCellName)-1].pinarray[atoi(PinName)-1].pinLocationX) : x_max ;
+					y_min = (reference_row + TechMenu[k].libcell[atoi(libCellName)-1].pinarray[atoi(PinName)-1].pinLocationY) < y_min ? (reference_row + TechMenu[k].libcell[atoi(libCellName)-1].pinarray[atoi(PinName)-1].pinLocationY) : y_min;
+					y_max = (reference_row + TechMenu[k].libcell[atoi(libCellName)-1].pinarray[atoi(PinName)-1].pinLocationY) > y_max ? (reference_row + TechMenu[k].libcell[atoi(libCellName)-1].pinarray[atoi(PinName)-1].pinLocationY) : y_max;
                 }
-            }
+            }            
 
         }
         bbox temp_bbox;
