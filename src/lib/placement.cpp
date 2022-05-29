@@ -43,20 +43,22 @@ void InitializePlacement(Die *currentDie, TopBottomCellArray *ArrayInfo, int fla
         assert(flag!=0 || flag!=1);
     }
 
-    unsigned long long int SumOfCellLength = 0;
-    unsigned long long int MaxLength = (currentDie->rowLength * currentDie->repeatCount) * currentDie->MaxUtil / 100;
+    double SumOfCellLength = 0;
+    double MaxLength = (currentDie->rowLength * currentDie->repeatCount);
 
     for(int i=0; i < currentCellNumber; i++){
         SumOfCellLength += currentCellArray[i].libCellSizeX;
     }
 
-    if( SumOfCellLength >= MaxLength - 1){
+    if( SumOfCellLength / MaxLength * 100 >= (double)currentDie->MaxUtil){
         if(flag==0) printf("Bottom Die: Violate the MaxUtil -> Partition again!\n");
         else printf("Top Die: Violate the MaxUtil -> Partition again!\n");
-        printf("MaxUtil of current die: %d Current Partition Util: %d \n\n", currentDie->MaxUtil, int(100 * SumOfCellLength / (currentDie->rowLength * currentDie->repeatCount)));
+        printf("<test for MaxUtil> MaxUtil of current die: %d Current Partition Util: %lf \n\n", currentDie->MaxUtil, SumOfCellLength / MaxLength * 100);
         return;
     }
 
+
+    //start to place the instance
     unsigned long long int usingCell = 0;
     vector <vector <int>> PlacementState(currentDie->repeatCount,vector <int>(currentDie->rowLength,EMPTY_STATE));
     int sucessful_placement_count = 0;
@@ -81,7 +83,7 @@ void InitializePlacement(Die *currentDie, TopBottomCellArray *ArrayInfo, int fla
                 currentCellArray[i].left_edge = left_edge;
                 currentCellArray[i].right_edge = right_edge;
                 sucessful_placement_count++;
-                usingCell += right_edge - left_edge +1;
+                usingCell += currentCellArray[i].libCellSizeX;
                 NewLeftEdgeArray[currentRow] = right_edge+1;
                 break; 
             }

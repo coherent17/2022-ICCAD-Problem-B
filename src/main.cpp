@@ -34,13 +34,13 @@ int main(int argc, char *argv[]){
 
 	//read file part
 	readTechnologyInfo(input, &NumTechnologies, TechMenu);	
-	printTechnologyInfo(NumTechnologies, TechMenu);
+	//printTechnologyInfo(NumTechnologies, TechMenu);
 	readDieInfo(input, &top_die, &bottom_die);
 	//printDieInfo(top_die, bottom_die);
 	readHybridTerminalInfo(input, &terminal);
 	//printHybridTerminalInfo(terminal);
 	readInstanceInfo(input, &NumInstances, InstanceArray);
-	printInstanceInfo(NumInstances, InstanceArray);
+	//printInstanceInfo(NumInstances, InstanceArray);
 	readNetInfo(input, &NumNets, rawnet);
 	//printNetInfo(NumNets, rawnet);
 
@@ -51,15 +51,15 @@ int main(int argc, char *argv[]){
 	ReadCutSize(&NumTerminal);									            //read cut size
 	ReadPartitionResult(&ArrayInfo, NumInstances, PartitionResult);			//store the partition result into cellarray in a
 	UpdateInstanceArray(InstanceArray, PartitionResult, top_die, bottom_die);
-	printPartitionResult(ArrayInfo, InstanceArray, PartitionResult);
+	//printPartitionResult(ArrayInfo, InstanceArray, PartitionResult);
 
 
 	//create netarray and cellarray
 	GetCellOfNet(rawnet, NetArray, NumNets, PartitionResult);
-	PrintNetArray(NetArray, NumNets);
+	//PrintNetArray(NetArray, NumNets);
 	GetNetOfCell(NetArray, &ArrayInfo, PartitionResult);
 	getSizeOfCellArray(&ArrayInfo, TechMenu, top_die, bottom_die, InstanceArray);
-	printTopBottomCellArray(&ArrayInfo, PartitionResult);
+	//printTopBottomCellArray(&ArrayInfo, PartitionResult);
 
 
 	//initial placement
@@ -97,15 +97,15 @@ int main(int argc, char *argv[]){
 		ReadCutSize(&NumTerminal);
 		ReadPartitionResult(&ArrayInfo, NumInstances, PartitionResult);
 		UpdateInstanceArray(InstanceArray, PartitionResult, top_die, bottom_die);
-		printPartitionResult(ArrayInfo, InstanceArray, PartitionResult);
+		//printPartitionResult(ArrayInfo, InstanceArray, PartitionResult);
 
 
 		//create netarray and cellarray
 		GetCellOfNet(rawnet, NetArray, NumNets, PartitionResult);
-		PrintNetArray(NetArray, NumNets);
+		//PrintNetArray(NetArray, NumNets);
 		GetNetOfCell(NetArray, &ArrayInfo, PartitionResult);
 		getSizeOfCellArray(&ArrayInfo, TechMenu, top_die, bottom_die, InstanceArray);
-		printTopBottomCellArray(&ArrayInfo, PartitionResult);
+		//printTopBottomCellArray(&ArrayInfo, PartitionResult);
 
 		InitializePlacement(&bottom_die, &ArrayInfo, 0, &BottomPartitionAgain);
 		//printPlacementState(bottom_die, BottomPartitionAgain);
