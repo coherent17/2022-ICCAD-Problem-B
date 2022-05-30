@@ -299,6 +299,48 @@ void printArrayInfo(TopBottomCellArray *ArrayInfo){
     }
 }
 
+bool isValidHybridPlacement(int centerX, int centerY){
+    return true;
+}
+
+void HybridPlacement(Hybrid_terminal *terminal, Die top_die, vector <Net> &NetArray){
+    vector <vector <int>> HBPlacementState(top_die.upperRightY - top_die.lowerLeftY + 1,vector <int>(top_die.upperRightX - top_die.lowerLeftX + 1,EMPTY_STATE));
+    int spacing = terminal->spacing;
+
+
+    //fill the BOUNDARY_INVALID between terminal and boundary
+    for(int i = 0; i < (int)HBPlacementState.size(); i++){
+        for(int j = 0; j < (int)HBPlacementState[i].size(); j++){
+            if(i < spacing){
+                HBPlacementState[i][j] =  BOUNDARY_INVALID;
+            }
+            else if(i >= (int)HBPlacementState.size() - spacing){
+                HBPlacementState[i][j] =  BOUNDARY_INVALID;
+            }
+            else if(j < spacing){
+                HBPlacementState[i][j] =  BOUNDARY_INVALID;           
+            }
+            else if(j >= (int)HBPlacementState[i].size() - spacing){
+                HBPlacementState[i][j] =  BOUNDARY_INVALID; 
+            }
+        }
+    }
+
+    for(int i = 0; i < (int)HBPlacementState.size(); i++){
+        for(int j = 0; j < (int)HBPlacementState[i].size(); j++){
+            printf("%d ", HBPlacementState[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+
+    // for(int i = 0; i < (int)NetArray.size(); i++){
+    //     if(NetArray[i].hasHybridTerminal){
+
+    //     }
+    // }
+}
+
 
 void outputAnswer(char *filename, TopBottomCellArray ArrayInfo, Die top_die, Die bottom_die){
     FILE *out = fopen(filename, "w");
@@ -309,7 +351,7 @@ void outputAnswer(char *filename, TopBottomCellArray ArrayInfo, Die top_die, Die
 
     fprintf(out, "BottomDiePlacement %d\n", ArrayInfo.BottomCellNumber);
     for(int i = 0; i < ArrayInfo.BottomCellNumber; i++){
-        fprintf(out, "Inst C%d %d %d\n", ArrayInfo.BottomCellArray[i].cellID, ArrayInfo.BottomCellArray[i].left_edge, ArrayInfo.BottomCellArray[i].rowID * bottom_die.rowHeight);
+        fprintf(out, "Inst C%d %d %d\n", ArrayInfo.BottomCellArray[i].cellID + 1, ArrayInfo.BottomCellArray[i].left_edge, ArrayInfo.BottomCellArray[i].rowID * bottom_die.rowHeight);
     }
 
     fprintf(out, "NumTerminals 1\n");

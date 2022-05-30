@@ -53,6 +53,7 @@ typedef struct _terminal{
     int sizeX;
     int sizeY;
     int spacing;   //between terminals and between terminal and boundary
+    vector <vector<int>> HBPlacementState;
 }Hybrid_terminal;
 
 typedef struct _Instance{

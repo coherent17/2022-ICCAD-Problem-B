@@ -11,7 +11,13 @@ typedef struct netStruct{
 	int CellNumber;      			//cell number included
 	vector <int> cells;  			//list of cell included in this nell
 	int NetID;
-	bool hasHybridTerminal;            			
+	bool hasHybridTerminal;
+	int x_min;
+	int x_max;
+	int y_min;
+	int y_max;
+	int HBlocationX;
+	int HBLocationY;            			
 } Net;
 
 typedef struct cellStruct{

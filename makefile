@@ -39,7 +39,7 @@ do4:
 	python3 visualize_cost.py
 
 debug:
-	$(CHECKCC) $(CHECKFLAGS) ./main Benchmark/case2.txt
+	$(CHECKCC) $(CHECKFLAGS) ./main Benchmark/case1.txt case1.out
 	#python3 visualize_placement.py
 	#python3 visualize_cost.py
 

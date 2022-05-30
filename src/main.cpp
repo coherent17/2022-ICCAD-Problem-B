@@ -89,6 +89,7 @@ int main(int argc, char *argv[]){
 		ArrayInfo.PartitionIndexResult.clear();
 		ArrayInfo.BottomCellArray.clear();
 		ArrayInfo.TopCellArray.clear();
+		NetArray.clear();
 
 
 		//partition part
@@ -113,7 +114,7 @@ int main(int argc, char *argv[]){
 			InitializePlacement(&top_die, &ArrayInfo, 1, &TopPartitionAgain);
 			//printPlacementState(top_die, TopPartitionAgain);
 		}
-		if(repartitionCount % 50 == 0) UBfactor += 3;
+		if(repartitionCount % 200 == 0) UBfactor += 3;
 		UBfactor = UBfactor % 35 + 1; 
 	}
 	printf("repartition %d times\n", repartitionCount);
@@ -136,6 +137,15 @@ int main(int argc, char *argv[]){
 	bottom_die = SA_contentPtr.bottom_die;
 	ArrayInfo = SA_contentPtr.ArrayInfo;
 	OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
+
+	//store the bboxes of each net
+	StoreBBOX(SA_contentPtr, NetArray);
+	printBBOX(NetArray);
+
+
+	//place the hybridBonding Termimal
+	HybridPlacement(&terminal, top_die, NetArray);
+
 	outputAnswer(outputName, ArrayInfo, top_die, bottom_die);
 	return 0;
 }

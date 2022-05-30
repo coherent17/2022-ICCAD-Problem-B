@@ -14,13 +14,10 @@
 bool SA_isValidPlacement(vector <vector <int>> PlacementState, int row, int left_edge, int right_edge){
     
     for(int i=left_edge; i<=right_edge; i++){
-        // printf("%d ",i);
         if(PlacementState[row][i]!=EMPTY_STATE){
-            // printf("\n");
             return false;
         }
     }
-    // printf(" \n");
     return true;
 }
 
@@ -308,4 +305,84 @@ SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
 	}
 	fclose(costOUT);
 	return SA_contentPtr;
+}
+
+void StoreBBOX(SA_CONTENT SA_contentPtr, vector <Net> &NetArray){
+
+	//unpack the SA_contentPtr
+	Die top_die = SA_contentPtr.top_die;
+	Die bottom_die = SA_contentPtr.bottom_die;
+	vector <Tech_menu> TechMenu = SA_contentPtr.TechMenu;
+	vector <RawNet> rawnet = SA_contentPtr.rawnet;
+	vector <int> PartitionResult = SA_contentPtr.PartitionResult;
+	vector <Instance> InstanceArray = SA_contentPtr.InstanceArray;
+	TopBottomCellArray ArrayInfo = SA_contentPtr.ArrayInfo;
+
+
+    vector <bbox> bboxes;
+
+    //output the pin location
+    for(int i = 0; i < (int)rawnet.size(); i++){
+
+        //the record for the bounding box
+        int x_min = INT_MAX;
+        int x_max = -1;
+        int y_min = INT_MAX;
+        int y_max = -1;
+
+        //find the pin location that rawnet[i] connect to
+        for(int j=0; j <rawnet[i].numPins; j++){
+            char buffer[INSTANCE_NAME_SIZE];
+            memset(buffer,'\0',INSTANCE_NAME_SIZE);
+            char PinName[PIN_NAME_SIZE];
+            memset(PinName,'\0',PIN_NAME_SIZE);
+            strncpy(PinName, &rawnet[i].Connection[j].libPinName[1], strlen(rawnet[i].Connection[j].libPinName)-1);
+            strncpy(buffer, &rawnet[i].Connection[j].instName[1], strlen(rawnet[i].Connection[j].instName)-1);
+            int current_instance = atoi(buffer);
+
+            //check the instance belongs to which die
+            int current_instance_partition = PartitionResult[current_instance-1];
+            int index = ArrayInfo.PartitionIndexResult[current_instance-1];
+            int reference_left_edge = 0;
+            int reference_row = 0;
+            char current_tech[TECH_NAME_SIZE];
+            memset(current_tech,'\0',TECH_NAME_SIZE);
+            char libCellName[LIBCELL_NAME_SIZE];
+            memset(libCellName,'\0',LIBCELL_NAME_SIZE);
+
+            if(current_instance_partition == 0){
+                reference_left_edge = ArrayInfo.BottomCellArray[index].left_edge;
+                reference_row = ArrayInfo.BottomCellArray[index].rowID * bottom_die.rowHeight;
+                strcpy(current_tech, bottom_die.tech);
+                strncpy(libCellName, &InstanceArray[current_instance-1].libCellName[2], strlen(InstanceArray[current_instance-1].libCellName)-2);
+            }
+
+            else if(current_instance_partition == 1){
+                reference_left_edge = ArrayInfo.TopCellArray[index].left_edge;
+                reference_row = ArrayInfo.TopCellArray[index].rowID * top_die.rowHeight;
+                strcpy(current_tech, top_die.tech);
+                strncpy(libCellName, &InstanceArray[current_instance-1].libCellName[2], strlen(InstanceArray[current_instance-1].libCellName)-2);
+            }
+
+            for(int k=0; k < (int)TechMenu.size(); k++){
+                if(strcmp(current_tech, TechMenu[k].tech) == 0){
+                	x_min = (reference_left_edge + TechMenu[k].libcell[atoi(libCellName)-1].pinarray[atoi(PinName)-1].pinLocationX) < x_min ? (reference_left_edge + TechMenu[k].libcell[atoi(libCellName)-1].pinarray[atoi(PinName)-1].pinLocationX) : x_min ;
+                	x_max = (reference_left_edge + TechMenu[k].libcell[atoi(libCellName)-1].pinarray[atoi(PinName)-1].pinLocationX) > x_max ? (reference_left_edge + TechMenu[k].libcell[atoi(libCellName)-1].pinarray[atoi(PinName)-1].pinLocationX) : x_max ;
+					y_min = (reference_row + TechMenu[k].libcell[atoi(libCellName)-1].pinarray[atoi(PinName)-1].pinLocationY) < y_min ? (reference_row + TechMenu[k].libcell[atoi(libCellName)-1].pinarray[atoi(PinName)-1].pinLocationY) : y_min;
+					y_max = (reference_row + TechMenu[k].libcell[atoi(libCellName)-1].pinarray[atoi(PinName)-1].pinLocationY) > y_max ? (reference_row + TechMenu[k].libcell[atoi(libCellName)-1].pinarray[atoi(PinName)-1].pinLocationY) : y_max;
+                }
+            }            
+
+        }
+        NetArray[i].x_min = x_min;
+        NetArray[i].x_max = x_max;
+        NetArray[i].y_min = y_min;
+        NetArray[i].y_max = y_max;
+    }
+}
+
+void printBBOX(vector <Net> NetArray){
+	for(int i = 0; i < (int)NetArray.size(); i++){
+		printf("Net %d: <%d %d %d %d>\n", i+1, NetArray[i].x_min, NetArray[i].x_max, NetArray[i].y_min, NetArray[i].y_max);
+	}
 }

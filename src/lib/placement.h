@@ -5,6 +5,7 @@
 #define _PLACEMENT_H_
 
 #define EMPTY_STATE -1
+#define BOUNDARY_INVALID -2
 
 typedef struct _point{
 	int x_cor;
@@ -23,5 +24,6 @@ void InitializePlacement(Die *currentDie, TopBottomCellArray *ArrayInfo, int fla
 void printPlacementState(Die current_die, bool PartitionAgain);
 void OutputCellLocateState(TopBottomCellArray ArrayInfo, Die top_die, Die bottom_die, vector <RawNet> rawnet, vector <Tech_menu> TechMenu, vector <int> PartitionResult, vector <Instance> InstanceArray);
 void printArrayInfo(TopBottomCellArray *ArrayInfo);
+void HybridPlacement(Hybrid_terminal *terminal, Die top_die, vector <Net> &NetArray);
 void outputAnswer(char *filename, TopBottomCellArray ArrayInfo, Die top_die, Die bottom_die);
 #endif

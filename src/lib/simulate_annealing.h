@@ -7,7 +7,7 @@
 #define _SIMULATE_ANNEALING_H_
 
 #define ANNEALING_TEMPERATURE 	24000
-#define TERMINATE_TEMPERATURE 	0.0001
+#define TERMINATE_TEMPERATURE 	0.01
 #define INNER_LOOP_TIMES 		160
 #define ALPHA					0.95
 
@@ -24,5 +24,6 @@ typedef struct _SA_CONTENT_{
 int Cost(SA_CONTENT SA_contentPtr);
 SA_CONTENT Move1(SA_CONTENT SA_contentPtr, int *moveFlag);
 SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr);
-
+void StoreBBOX(SA_CONTENT SA_contentPtr, vector <Net> &NetArray);
+void printBBOX(vector <Net> NetArray);
 #endif

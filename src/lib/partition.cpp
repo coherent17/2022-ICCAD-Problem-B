@@ -146,6 +146,7 @@ void printPartitionResult(TopBottomCellArray ArrayInfo, vector <Instance> Instan
 
 void GetCellOfNet(vector <RawNet> rawnet, vector <Net> &NetArray, int NumNets, vector <int> PartitionResult){
 	Net tempNet;
+	int terminal_count = 0;
 	for(int i=0; i<NumNets; i++){
 		vector <int> temp_cells;
 		for(int j=0; j<(rawnet[i].numPins); j++){
@@ -164,6 +165,7 @@ void GetCellOfNet(vector <RawNet> rawnet, vector <Net> &NetArray, int NumNets, v
 		int first_cell_partition = PartitionResult[temp_cells[0]];
 		for(int j = 1; j < (int)temp_cells.size(); j++){
 			if(PartitionResult[temp_cells[j]] != first_cell_partition){
+				terminal_count++;
 				tempNet.hasHybridTerminal = true;
 				break;
 			}
