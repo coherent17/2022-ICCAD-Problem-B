@@ -144,7 +144,7 @@ void printPartitionResult(TopBottomCellArray ArrayInfo, vector <Instance> Instan
 	}
 }
 
-void GetCellOfNet(vector <RawNet> rawnet, vector <Net> &NetArray, int NumNets, vector <int> PartitionResult){
+void GetCellOfNet(vector <RawNet> rawnet, vector <Net> &NetArray, int NumNets, vector <int> PartitionResult, int *NumTerminal){
 	Net tempNet;
 	int terminal_count = 0;
 	for(int i=0; i<NumNets; i++){
@@ -171,6 +171,7 @@ void GetCellOfNet(vector <RawNet> rawnet, vector <Net> &NetArray, int NumNets, v
 			}
 		}
 		NetArray.emplace_back(tempNet);
+		*NumTerminal = terminal_count;
 	}
 }
 

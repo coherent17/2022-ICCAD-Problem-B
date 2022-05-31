@@ -301,7 +301,7 @@ SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
 			//OutputCellLocateState(SA_contentPtr.ArrayInfo, SA_contentPtr.top_die, SA_contentPtr.bottom_die, SA_contentPtr.rawnet, SA_contentPtr.TechMenu, SA_contentPtr.PartitionResult, SA_contentPtr.InstanceArray);
 		}
 		fprintf(costOUT, "%d,",old_cost);
-		Temperature = (Temperature > 1) ? Temperature * 0.1 : Temperature * 0.95;
+		Temperature = (Temperature > 1) ? Temperature * 0.1 : Temperature * 0.1;
 	}
 	fclose(costOUT);
 	return SA_contentPtr;

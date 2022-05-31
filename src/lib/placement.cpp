@@ -8,7 +8,7 @@
 #include "readfile.h"
 #include "partition.h"
 
-bool isValidPlacement(vector <int> NewLeftEdgeArray, int currentRow, int left_edge, int right_edge, int rowLength){
+bool isValidPlacement(vector <int> &NewLeftEdgeArray, int currentRow, int left_edge, int right_edge, int rowLength){
     
     if(right_edge <= rowLength-1){
         return true;
@@ -299,14 +299,29 @@ void printArrayInfo(TopBottomCellArray *ArrayInfo){
     }
 }
 
-bool isValidHybridPlacement(int centerX, int centerY){
+bool isValidHybridPlacement(int center_x, int center_y, int terminalX, int terminalY, vector <vector <int>> &HBPlacementState, int spacing){
+    for(int i= center_y - terminalY/2 - spacing +1 ; i <= center_y + terminalY/2 +spacing; i++){
+        for(int j= center_x - terminalX/2 - spacing +1 ; j <= center_x + terminalX/2 +spacing; j++){
+           
+            if(HBPlacementState[i][j]==PLACEMENT_USED && HBPlacementState[i][j]==BOUNDARY_INVALID) return false;
+        }
+    }
     return true;
+}
+
+void fillHybridPlacement(int center_x, int center_y, int terminalX, int terminalY, vector <vector <int>> &HBPlacementState){
+    for(int i= center_y - terminalY/2 +1 ; i <= center_y + terminalY/2 ; i++){
+        for(int j= center_x - terminalX/2 +1 ; j <= center_x + terminalX/2 ; j++){
+            HBPlacementState[i][j]=PLACEMENT_USED;
+        }
+    }
 }
 
 void HybridPlacement(Hybrid_terminal *terminal, Die top_die, vector <Net> &NetArray){
     vector <vector <int>> HBPlacementState(top_die.upperRightY - top_die.lowerLeftY + 1,vector <int>(top_die.upperRightX - top_die.lowerLeftX + 1,EMPTY_STATE));
     int spacing = terminal->spacing;
-
+    int dieSizeX = top_die.upperRightX;
+    int dieSizeY = top_die.upperRightY;
 
     //fill the BOUNDARY_INVALID between terminal and boundary
     for(int i = 0; i < (int)HBPlacementState.size(); i++){
@@ -325,24 +340,56 @@ void HybridPlacement(Hybrid_terminal *terminal, Die top_die, vector <Net> &NetAr
             }
         }
     }
+    int place_count=0;
 
-    for(int i = 0; i < (int)HBPlacementState.size(); i++){
-        for(int j = 0; j < (int)HBPlacementState[i].size(); j++){
-            printf("%d ", HBPlacementState[i][j]);
+    for(int i=0; i<(int)NetArray.size(); i++){
+        if(NetArray[i].hasHybridTerminal==1){
+            // printf("i=%d.\n",i);
+            int lower_bound = (NetArray[i].y_min  < (spacing + (terminal->sizeY/2)) - 1) ? spacing + (terminal->sizeY/2) - 1 : NetArray[i].y_min;
+            int upper_bound = (NetArray[i].y_max > dieSizeY - spacing - terminal->sizeY/2 -1 ) ? dieSizeY - spacing -1 - (terminal->sizeY/2): NetArray[i].y_max;           
+            int left_bound =  (NetArray[i].x_min < spacing + (terminal->sizeX/2) - 1 ) ? spacing + (terminal->sizeX/2) - 1: NetArray[i].x_min  ;
+            int right_bound = (NetArray[i].x_max > dieSizeX  - spacing - terminal->sizeX/2 -1) ? dieSizeX  - spacing -1 - (terminal->sizeX/2): NetArray[i].x_max;
+            lower_bound++;
+            left_bound++;
+        //    printf("lower bound = %d. upper= %d. left = %d. right = %d.",lower_bound, upper_bound, left_bound, right_bound);
+            bool successful_placed =0;
+            for(int j=lower_bound ; j <= upper_bound; j++){
+                
+                for(int k=left_bound; k<=right_bound; k++){
+                    // printf("j = %d k = %d\n", j, k);
+                    if(isValidHybridPlacement(j,k,terminal->sizeX,terminal->sizeY ,HBPlacementState, spacing)==1){
+                        fillHybridPlacement(j,k,terminal->sizeX,terminal->sizeY ,HBPlacementState);
+                        printf("net %d successful putting terminal!!!\n", i+1);
+                        NetArray[i].HBlocationX = k;
+                        NetArray[i].HBLocationY = j;
+                        successful_placed = 1;
+                        place_count++;
+                        break;
+                    }
+                }
+                if(successful_placed == 1) break;
+            }
+            if(successful_placed != 1){
+                printf("net %d failed.\n",i);
+            }
         }
-        printf("\n");
     }
-    printf("\n");
 
-    // for(int i = 0; i < (int)NetArray.size(); i++){
-    //     if(NetArray[i].hasHybridTerminal){
-
+    terminal->HBPlacementState = HBPlacementState;
+    // for(int i = 0; i < (int)terminal->HBPlacementState.size(); i++){
+    //     for(int j = 0; j < (int)terminal->HBPlacementState[i].size(); j++){
+    //         printf("%d ", terminal->HBPlacementState[i][j]);
     //     }
+    //     printf("\n");
     // }
+    // printf("\n");
+
+    printf("placement count =  %d\n",place_count);
+
 }
 
 
-void outputAnswer(char *filename, TopBottomCellArray ArrayInfo, Die top_die, Die bottom_die){
+void outputAnswer(char *filename, TopBottomCellArray ArrayInfo, Die top_die, Die bottom_die, int NumTerminal, vector <Net> NetArray){
     FILE *out = fopen(filename, "w");
     fprintf(out, "TopDiePlacement %d\n", ArrayInfo.TopCellNumber);
     for(int i = 0; i < ArrayInfo.TopCellNumber; i++){
@@ -354,6 +401,12 @@ void outputAnswer(char *filename, TopBottomCellArray ArrayInfo, Die top_die, Die
         fprintf(out, "Inst C%d %d %d\n", ArrayInfo.BottomCellArray[i].cellID + 1, ArrayInfo.BottomCellArray[i].left_edge, ArrayInfo.BottomCellArray[i].rowID * bottom_die.rowHeight);
     }
 
-    fprintf(out, "NumTerminals 1\n");
+    fprintf(out, "NumTerminals %d\n", NumTerminal);
+    for(int i = 0; i < (int)NetArray.size(); i++){
+        if(NetArray[i].hasHybridTerminal){
+            fprintf(out,"Terminal N%d %d %d\n", NetArray[i].NetID+1, NetArray[i].HBlocationX, NetArray[i].HBLocationY);
+        }
+    }
+
     fclose(out);
 }

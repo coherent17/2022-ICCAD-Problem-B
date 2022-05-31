@@ -37,8 +37,6 @@ typedef struct _die{
     int lowerLeftY;
     int upperRightX;
     int upperRightY;
-    int size_x;
-    int size_y;
     int MaxUtil;
     int startX;                 //start x of row
     int startY;                 //start y of row

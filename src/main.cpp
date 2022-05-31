@@ -31,7 +31,6 @@ int main(int argc, char *argv[]){
 	vector <Net> NetArray;													//NetArray store how many cell connects to this net and a list of cell which connects to this net
 	TopBottomCellArray ArrayInfo;											//Store the partition result and there is two vector inside this structure (see partition.h) store the cellarray of the two dies
 
-
 	//read file part
 	readTechnologyInfo(input, &NumTechnologies, TechMenu);	
 	//printTechnologyInfo(NumTechnologies, TechMenu);
@@ -55,7 +54,7 @@ int main(int argc, char *argv[]){
 
 
 	//create netarray and cellarray
-	GetCellOfNet(rawnet, NetArray, NumNets, PartitionResult);
+	GetCellOfNet(rawnet, NetArray, NumNets, PartitionResult, &NumTerminal);
 	//PrintNetArray(NetArray, NumNets);
 	GetNetOfCell(NetArray, &ArrayInfo, PartitionResult);
 	getSizeOfCellArray(&ArrayInfo, TechMenu, top_die, bottom_die, InstanceArray);
@@ -102,7 +101,7 @@ int main(int argc, char *argv[]){
 
 
 		//create netarray and cellarray
-		GetCellOfNet(rawnet, NetArray, NumNets, PartitionResult);
+		GetCellOfNet(rawnet, NetArray, NumNets, PartitionResult, &NumTerminal);
 		//PrintNetArray(NetArray, NumNets);
 		GetNetOfCell(NetArray, &ArrayInfo, PartitionResult);
 		getSizeOfCellArray(&ArrayInfo, TechMenu, top_die, bottom_die, InstanceArray);
@@ -140,12 +139,12 @@ int main(int argc, char *argv[]){
 
 	//store the bboxes of each net
 	StoreBBOX(SA_contentPtr, NetArray);
-	printBBOX(NetArray);
+	//printBBOX(NetArray);
 
 
 	//place the hybridBonding Termimal
 	HybridPlacement(&terminal, top_die, NetArray);
 
-	outputAnswer(outputName, ArrayInfo, top_die, bottom_die);
+	outputAnswer(outputName, ArrayInfo, top_die, bottom_die, NumTerminal, NetArray);
 	return 0;
 }
