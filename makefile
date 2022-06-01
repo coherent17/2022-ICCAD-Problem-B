@@ -16,7 +16,7 @@ all: $(BINS)
 	$(CC) $(CFLAGS) -c  $< -o $@
 
 $(BINS): src/main.cpp $(OBJS)
-	$(CC) $(CFLAGS)  $^ -o $@
+	$(CC) $(CFLAGS) -fopenmp  $^ -o $@
 
 do1:
 	time ./main Benchmark/case1.txt case1.out

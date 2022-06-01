@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <limits.h>
 #include <cmath>
+#include <omp.h>
 #include "placement.h"
 #include "readfile.h"
 #include "partition.h"
@@ -21,7 +22,7 @@ bool SA_isValidPlacement(vector <vector <int>> PlacementState, int row, int left
     return true;
 }
 
-int Cost(SA_CONTENT SA_contentPtr){
+unsigned long long int Cost(SA_CONTENT SA_contentPtr){
 
 	//unpack the SA_contentPtr
 	Die top_die = SA_contentPtr.top_die;
@@ -96,7 +97,7 @@ int Cost(SA_CONTENT SA_contentPtr){
         bboxes.emplace_back(temp_bbox); 
     }
 
-    int result = 0;
+    unsigned long long int result = 0;
     //calculate the total similar_HPWL of the bbox
     for(int i = 0; i < (int)bboxes.size(); i++){
     	result += (bboxes[i].x_max - bboxes[i].x_min) + (bboxes[i].y_max - bboxes[i].y_min);
@@ -232,12 +233,12 @@ SA_CONTENT Move1(SA_CONTENT SA_contentPtr, int *moveFlag){
 }
 
 //f(delta c, T) = min(1, exp(-delta C / T))
-double f(int delta_cost, double Temperature){
+double f(unsigned long long int delta_cost, double Temperature){
 	return 1 > exp(-1 * delta_cost / Temperature) ? exp(-1 * delta_cost / Temperature) : 1;
 }
 
-bool accept(int new_cost, int old_cost, double Temperature){
-	int delta_cost = new_cost - old_cost;
+bool accept(unsigned long long int new_cost, unsigned long long int old_cost, double Temperature){
+	unsigned long long int delta_cost = new_cost - old_cost;
 	double y = f(delta_cost, Temperature);
 	double r = getDoubleRandom();
 
@@ -245,7 +246,7 @@ bool accept(int new_cost, int old_cost, double Temperature){
 	else return 0;
 }
 
-SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
+SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr, double ANNEALING_TEMPERATURE, double TERMINATE_TEMPERATURE, int INNER_LOOP_TIMES, double ALPHA){
 
 	//open a file to record the cost
 	FILE *costOUT = fopen("cost.out", "w");
@@ -254,11 +255,20 @@ SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
 	SA_CONTENT new_SA_contentPtr;
 	int breakCount = 0;
 
+	bool canBreak = false;
 	while(Temperature > TERMINATE_TEMPERATURE){
-		int old_cost = 0;
-		int new_cost = 0;
+		printf(" I am now goint to simulate annealing\n");
+		if(canBreak) return SA_contentPtr;
+		unsigned long long int old_cost = 0;
+		unsigned long long int new_cost = 0;
 		for(int i = 0; i < INNER_LOOP_TIMES; i++){
-			if(breakCount >= INNER_LOOP_TIMES * 3) return SA_contentPtr;			//early return if converges
+			printf("%g sec pass...\n", omp_get_wtime()-start_time);
+			if(omp_get_wtime() - start_time > CUT_OFF_TIME){
+				printf(">>>>>END!!!%g %g\n", omp_get_wtime(), start_time);
+				canBreak = true;
+				break;
+			}
+			if(breakCount >= INNER_LOOP_TIMES * 10) return SA_contentPtr;			//early return if converges
 			int moveFlag;
 			new_SA_contentPtr = Move1(SA_contentPtr, &moveFlag);
 			//printPlacementState(new_SA_contentPtr.top_die,0);
@@ -274,7 +284,7 @@ SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
 				old_cost = Cost(SA_contentPtr);
 				new_cost = Cost(new_SA_contentPtr);
 				if(old_cost == new_cost) breakCount++;
-				printf("old_cost = %d, new_cost = %d\n",old_cost, new_cost);
+				printf("old_cost = %lld, new_cost = %lld\n",old_cost, new_cost);
 				printf("at temperature = %f, INNER_LOOP_TIMES = %d\n", Temperature, i);
 
 				if(accept(new_cost, old_cost, Temperature)){
@@ -300,8 +310,8 @@ SA_CONTENT SimulateAnnealing(SA_CONTENT SA_contentPtr){
 			}
 			//OutputCellLocateState(SA_contentPtr.ArrayInfo, SA_contentPtr.top_die, SA_contentPtr.bottom_die, SA_contentPtr.rawnet, SA_contentPtr.TechMenu, SA_contentPtr.PartitionResult, SA_contentPtr.InstanceArray);
 		}
-		fprintf(costOUT, "%d,",old_cost);
-		Temperature = (Temperature > 1) ? Temperature * 0.1 : Temperature * 0.1;
+		fprintf(costOUT, "%lld,",old_cost);
+		Temperature = (Temperature > 1) ? Temperature * 0.1 : Temperature * 0.95;
 	}
 	fclose(costOUT);
 	return SA_contentPtr;

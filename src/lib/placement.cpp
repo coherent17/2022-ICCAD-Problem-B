@@ -302,8 +302,11 @@ void printArrayInfo(TopBottomCellArray *ArrayInfo){
 bool isValidHybridPlacement(int center_x, int center_y, int terminalX, int terminalY, vector <vector <int>> &HBPlacementState, int spacing){
     for(int i= center_y - terminalY/2 - spacing +1 ; i <= center_y + terminalY/2 +spacing; i++){
         for(int j= center_x - terminalX/2 - spacing +1 ; j <= center_x + terminalX/2 +spacing; j++){
-           
-            if(HBPlacementState[i][j]==PLACEMENT_USED && HBPlacementState[i][j]==BOUNDARY_INVALID) return false;
+            
+            if(HBPlacementState[i][j]==PLACEMENT_USED ){
+                // printf("(%d, %d) isValid failed.\n",j,i);
+                return false;
+            }
         }
     }
     return true;
@@ -323,34 +326,33 @@ void HybridPlacement(Hybrid_terminal *terminal, Die top_die, vector <Net> &NetAr
     int dieSizeX = top_die.upperRightX;
     int dieSizeY = top_die.upperRightY;
 
-    //fill the BOUNDARY_INVALID between terminal and boundary
-    for(int i = 0; i < (int)HBPlacementState.size(); i++){
-        for(int j = 0; j < (int)HBPlacementState[i].size(); j++){
-            if(i < spacing){
-                HBPlacementState[i][j] =  BOUNDARY_INVALID;
-            }
-            else if(i >= (int)HBPlacementState.size() - spacing){
-                HBPlacementState[i][j] =  BOUNDARY_INVALID;
-            }
-            else if(j < spacing){
-                HBPlacementState[i][j] =  BOUNDARY_INVALID;           
-            }
-            else if(j >= (int)HBPlacementState[i].size() - spacing){
-                HBPlacementState[i][j] =  BOUNDARY_INVALID; 
-            }
-        }
-    }
+    // //fill the BOUNDARY_INVALID between terminal and boundary
+    // for(int i = 0; i < (int)HBPlacementState.size(); i++){
+    //     for(int j = 0; j < (int)HBPlacementState[i].size(); j++){
+    //         if(i <= spacing){
+    //             HBPlacementState[i][j] =  BOUNDARY_INVALID;
+    //         }
+    //         else if(i >= (int)HBPlacementState.size() - spacing){
+    //             HBPlacementState[i][j] =  BOUNDARY_INVALID;
+    //         }
+    //         else if(j <= spacing){
+    //             HBPlacementState[i][j] =  BOUNDARY_INVALID;           
+    //         }
+    //         else if(j >= (int)HBPlacementState[i].size() - spacing){
+    //             HBPlacementState[i][j] =  BOUNDARY_INVALID; 
+    //         }
+    //     }
+    // }
     int place_count=0;
 
     for(int i=0; i<(int)NetArray.size(); i++){
         if(NetArray[i].hasHybridTerminal==1){
             // printf("i=%d.\n",i);
-            int lower_bound = (NetArray[i].y_min  < (spacing + (terminal->sizeY/2)) - 1) ? spacing + (terminal->sizeY/2) - 1 : NetArray[i].y_min;
+            int lower_bound = (NetArray[i].y_min  < (spacing + (terminal->sizeY/2))) ? spacing + (terminal->sizeY/2) : NetArray[i].y_min;
             int upper_bound = (NetArray[i].y_max > dieSizeY - spacing - terminal->sizeY/2 -1 ) ? dieSizeY - spacing -1 - (terminal->sizeY/2): NetArray[i].y_max;           
-            int left_bound =  (NetArray[i].x_min < spacing + (terminal->sizeX/2) - 1 ) ? spacing + (terminal->sizeX/2) - 1: NetArray[i].x_min  ;
+            int left_bound =  (NetArray[i].x_min < spacing + (terminal->sizeX/2)) ? spacing + (terminal->sizeX/2) : NetArray[i].x_min  ;
             int right_bound = (NetArray[i].x_max > dieSizeX  - spacing - terminal->sizeX/2 -1) ? dieSizeX  - spacing -1 - (terminal->sizeX/2): NetArray[i].x_max;
-            lower_bound++;
-            left_bound++;
+
         //    printf("lower bound = %d. upper= %d. left = %d. right = %d.",lower_bound, upper_bound, left_bound, right_bound);
             bool successful_placed =0;
             for(int j=lower_bound ; j <= upper_bound; j++){
@@ -359,7 +361,7 @@ void HybridPlacement(Hybrid_terminal *terminal, Die top_die, vector <Net> &NetAr
                     // printf("j = %d k = %d\n", j, k);
                     if(isValidHybridPlacement(j,k,terminal->sizeX,terminal->sizeY ,HBPlacementState, spacing)==1){
                         fillHybridPlacement(j,k,terminal->sizeX,terminal->sizeY ,HBPlacementState);
-                        printf("net %d successful putting terminal!!!\n", i+1);
+                        // printf("net %d successful putting terminal!!!\n", i+1);
                         NetArray[i].HBlocationX = k;
                         NetArray[i].HBLocationY = j;
                         successful_placed = 1;

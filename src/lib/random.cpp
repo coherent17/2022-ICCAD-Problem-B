@@ -6,5 +6,5 @@ int getIntRandom(int lower, int upper){
 }
 
 double getDoubleRandom(){
-	return ((double)random()/RAND_MAX);
+	return ((double)rand()/RAND_MAX);
 }
