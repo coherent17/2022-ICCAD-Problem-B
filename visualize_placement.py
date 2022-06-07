@@ -19,8 +19,7 @@ def readFile():
 
 
    #using (20,6) for case1
-   #using (30,18) for case2
-   #using (45,24) for case3
+   #using (20,18) for other case
    fig, ax = plt.subplots(1,2, figsize = (20,6))
    bottom_repeatCount, bottom_rowLength, bottom_die_rowHeight = file.readline().split()
    bottom_repeatCount = int(bottom_repeatCount)

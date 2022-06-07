@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <limits.h>
-#include <cmath>
+#include <math.h>
 #include <omp.h>
 #include "placement.h"
 #include "readfile.h"
@@ -233,12 +233,15 @@ SA_CONTENT Move1(SA_CONTENT SA_contentPtr, int *moveFlag){
 }
 
 //f(delta c, T) = min(1, exp(-delta C / T))
-double f(unsigned long long int delta_cost, double Temperature){
-	return 1 > exp(-1 * delta_cost / Temperature) ? exp(-1 * delta_cost / Temperature) : 1;
+double f(int delta_cost, double Temperature){
+	double temp = -1 * delta_cost / Temperature;
+	printf("temp = %lf\n", temp);
+	printf("exp(temp) = %lf\n", exp(temp));
+	return 1 > exp(temp) ? exp(temp) : 1;
 }
 
 bool accept(unsigned long long int new_cost, unsigned long long int old_cost, double Temperature){
-	unsigned long long int delta_cost = new_cost - old_cost;
+	int delta_cost = new_cost - old_cost;
 	double y = f(delta_cost, Temperature);
 	double r = getDoubleRandom();
 
