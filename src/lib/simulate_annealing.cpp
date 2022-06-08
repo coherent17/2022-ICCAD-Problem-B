@@ -164,7 +164,7 @@ SA_CONTENT Move1(SA_CONTENT SA_contentPtr, int *moveFlag){
 			temp.comeFrom = 0;
 			ValidPlacementList.emplace_back(temp);
 			listCount++;
-			if(listCount == 5) break;
+			if(listCount == 2) break;
 		}
 		int colSpacing = getIntRandom(0,currentDie.rowLength-1-length);
 		left_edge += colSpacing;

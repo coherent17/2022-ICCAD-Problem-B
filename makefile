@@ -21,19 +21,19 @@ $(BINS): src/main.cpp $(OBJS)
 do1:
 	time ./main Benchmark/case1.txt case1.out
 	./Problem\ B_evaluator_0525 Benchmark/case1.txt case1.out
-	#python3 visualize_placement.py
+	python3 visualize_placement.py
 	#python3 visualize_cost.py
 
 do2:
 	time ./main Benchmark/case2.txt case2.out
 	./Problem\ B_evaluator_0525 Benchmark/case2.txt case2.out
-	#python3 visualize_placement.py
+	python3 visualize_placement.py
 	#python3 visualize_cost.py
 
 do3:
 	time ./main Benchmark/case3.txt case3.out
 	./Problem\ B_evaluator_0525 Benchmark/case3.txt case3.out
-	#python3 visualize_placement.py
+	python3 visualize_placement.py
 	#python3 visualize_cost.py
 
 do4:

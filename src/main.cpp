@@ -17,7 +17,7 @@ using namespace std;
 using std::vector;
 
 int main(int argc, char *argv[]){
-	CUT_OFF_TIME = 150;
+	CUT_OFF_TIME = 1800;
 	start_time = omp_get_wtime();
 	srand(time(NULL));
 	char *inputName = *(argv + 1);
@@ -151,43 +151,57 @@ int main(int argc, char *argv[]){
 
 
 	//simulate annealing parameter
-	unsigned long long int INITIAL_COST = Cost(SA_contentPtr);
-	double ANNEALING_TEMPERATURE = double(200 * INITIAL_COST);
-	double TERMINATE_TEMPERATURE = 0.000005 * INITIAL_COST / NumNets;
-	int INNER_LOOP_TIMES = 20 * NumInstances;
-	double ALPHA = 0.95;
+	unsigned long long int INITIAL_COST;
+	double ANNEALING_TEMPERATURE;
+	double TERMINATE_TEMPERATURE;
+	int INNER_LOOP_TIMES;
+	double ALPHA;
 
-	printf("%g %g %d %g\n", ANNEALING_TEMPERATURE, TERMINATE_TEMPERATURE, INNER_LOOP_TIMES, ALPHA);
+	//using high temperature to seperate the instance
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	INITIAL_COST = Cost(SA_contentPtr);
+	ANNEALING_TEMPERATURE = double(200 * INITIAL_COST);
+	TERMINATE_TEMPERATURE = ANNEALING_TEMPERATURE * 0.9;
+	INNER_LOOP_TIMES = int(0.25 * NumInstances);
+	ALPHA = 0.95;
+
 	SA_contentPtr = SimulateAnnealing(SA_contentPtr, ANNEALING_TEMPERATURE, TERMINATE_TEMPERATURE, INNER_LOOP_TIMES, ALPHA);
+	// top_die = SA_contentPtr.top_die;
+	// bottom_die = SA_contentPtr.bottom_die;
+	// ArrayInfo = SA_contentPtr.ArrayInfo;
+	//OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	INITIAL_COST = Cost(SA_contentPtr);
+	ANNEALING_TEMPERATURE = double(INITIAL_COST);
+	TERMINATE_TEMPERATURE = 0.000005 * INITIAL_COST / NumNets;
+	INNER_LOOP_TIMES = int(0.5 * NumInstances);
+	ALPHA = 0.95;
+
+	SA_contentPtr = SimulateAnnealing(SA_contentPtr, ANNEALING_TEMPERATURE, TERMINATE_TEMPERATURE, INNER_LOOP_TIMES, ALPHA);
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//compare the placement after simulate annealing with before simulate annealing
-
 	printf("%lld %lld\n", Cost(SA_contentPtr), Cost(OLD_SA_contentPtr));
 	if(Cost(SA_contentPtr) <  Cost(OLD_SA_contentPtr)){
 		top_die = SA_contentPtr.top_die;
 		bottom_die = SA_contentPtr.bottom_die;
 		ArrayInfo = SA_contentPtr.ArrayInfo;
 		StoreBBOX(SA_contentPtr, NetArray);
-		printf("1.\n");
 	}
 	else{
 		top_die = OLD_SA_contentPtr.top_die;
 		bottom_die = OLD_SA_contentPtr.bottom_die;
 		ArrayInfo = OLD_SA_contentPtr.ArrayInfo;
 		StoreBBOX(OLD_SA_contentPtr, NetArray);	
-		printf("2.\n");	
 	}
 
 	OutputCellLocateState(ArrayInfo, top_die, bottom_die, rawnet, TechMenu, PartitionResult, InstanceArray);
-	printf("3.\n");
-	//printBBOX(NetArray);
-	printf("4.\n");
 
 	//place the hybridBonding Termimal
 	HybridPlacement(&terminal, top_die, NetArray);
-	printf("5.\n");
 	outputAnswer(outputName, ArrayInfo, top_die, bottom_die, NumTerminal, NetArray);
-	printf("6.\n");
 	return 0;
 }
